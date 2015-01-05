@@ -440,7 +440,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		wp_enqueue_script('jquery-ui-droppable');
 		wp_enqueue_script('jquery-ui-button');
 		wp_enqueue_script('jquery-ui-slider');
-		
+		/*
 		wp_enqueue_script(
 			'uniform',
 			plugins_url( 'js/jquery.uniform.min.js', dirname( __FILE__ ) ),
@@ -448,7 +448,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			'0.1',
 			true
 		);
-		
+		*/
 		wp_enqueue_script(
 			'wpcufpn-colorpicker',
 			plugins_url( 'js/wpcufpn_colorpicker.js', dirname( __FILE__ ) ),
@@ -562,7 +562,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 						$('#tab-1 ul.hidden').hide();
 						
 						$('.source_type_sel').click(function(e){
-							console.log( 'clicked ' + $(this).val() );
+							//console.log( 'clicked ' + $(this).val() );
 							//$( '.wpcufpntabs' ).tabs( 'load', $(this).val() );
 							$( '#tab-' + $(this).val() ).click();
 						});
@@ -582,7 +582,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 						});
 
 						/** UI switches **/
-						$("select, input, button").uniform();
+						//$("select, input, button").uniform();
 						//$('.radioset').buttonset();
 
 						/** Drag & Drop widget configurator **/
@@ -862,7 +862,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</ul>';	//fields
 		echo '</div>';	//wpcu-inner-admin-block
 		// ---------------------------------------- //
-		/*
+		
 		if( !class_exists(wpcuWPFnProPlugin) ) {
 			echo '<div class="wpcu-inner-admin-block wpcu yellowed"><p>' .
 				__(
@@ -874,7 +874,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		} else {
 			do_action( 'wpcufpn_displaytheme_col1_add_fields', $settings );
 		}
-		*/
+		
 		echo '</div>';	//wpcu-inner-admin-col
 		echo '<div class="wpcu-inner-admin-col">';
 		
@@ -938,11 +938,14 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			$classdisabled=" disabled";
 		}
 		
+		if( !class_exists(wpcuWPFnProPlugin) ) {
+			$classdisabled=" disabled";
+		} else {
+			$classdisabled="";
+		}
+		
 		// -block---------------------------------- //
-		if( !class_exists(wpcuWPFnProPlugin) ) 
-			echo '<div id="wpcufpn_config_zone" class="disabled wpcu-inner-admin-block with-title with-border '.$classdisabled.$classdisabledsmooth.'">';
-		else
-			echo '<div id="wpcufpn_config_zone" class="disabled wpcu-inner-admin-block with-title with-border '.$classdisabled.$classdisabledsmooth.'">';
+		echo '<div id="wpcufpn_config_zone" class="wpcu-inner-admin-block with-title with-border '.$classdisabled.$classdisabledsmooth.'">';
 		echo '<h4>A news item</h4>';
 		echo '<div class="wpcufpn-drag-config"></div>';
 		echo '<div class="arrow_col_wrapper"><ul class="arrow_col">';
@@ -1050,7 +1053,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</ul>';	//fields
 		echo '</div>';	//wpcu-inner-admin-block
 		// ---------------------------------------- //
-		/*
+		
 		if( !class_exists(wpcuWPFnProPlugin) ) {
 			echo '<p class="wpcu pro_reminder"><div class="wpcu yellowed">' . 
 				__(
@@ -1061,7 +1064,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		} else {
 			do_action( 'wpcufpn_imagesource_add_fields', $settings );
 		}
-		 */ 
 	}
 	
 	/**
@@ -1080,7 +1082,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			'<input id="date_fmt" type="text" name="wpcufpn_date_fmt" value="' . htmlspecialchars( isset($settings['date_fmt'])?$settings['date_fmt']:'' ) . '" class="short-text" /></li>';
 		
 		echo '</ul>';	//fields
-		/*
+		
 		if( !class_exists(wpcuWPFnProPlugin) ) {
 			echo '<div class="wpcu yellowed halfed">';
 			echo '<p>' . __('Looking out for more <em>advanced</em> features?') . '</p>';
@@ -1089,7 +1091,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		} else {
 			do_action( 'wpcufpn_displayadvanced_add_fields', $settings );
 		}
-		*/		
+				
 	}
 	
 	/**
@@ -1107,7 +1109,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<p> </p>';
 		
 		/** Support information **/
-		/*
+		
 		if( !class_exists(wpcuWPFnProPlugin) ) {
 			echo '<div id="promote">';
 			echo '<h1>Get Pro version</h1>';
@@ -1115,7 +1117,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			echo '<p><em>Optional add-on is currently not installed or not enabled ' .
 				'&rarr; <a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">get it here !</a></em></p>';
 			/** Marketing **/ 
-			/*
+			
 			echo '<iframe src="//player.vimeo.com/video/77775570" width="485" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="http://vimeo.com/77775570">';				
 			
 			
@@ -1187,9 +1189,9 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			</a>';
 			
 			echo '</div>';	
-		} else {*/
-			//do_action( 'wpcufpn_display_about', $this->version );
-		//}
+		} else {
+			do_action( 'wpcufpn_display_about', $this->version );
+		}
 		echo '<hr/><p>' . __('Initially released in october 2013 by <a href="http://www.joomunited.com/">JoomUnited</a>') . '</p>';
 		echo '<p>WP Latest Posts WordPress plugin version ' . $this->version . '</p>';
 		echo '<p>' . __('Author: ') . ' JoomUnited</p>';
@@ -1259,7 +1261,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<option value="desc" ' . $source_asc_selected['desc'] . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
-		/*
+		
 		if( !class_exists(wpcuWPFnProPlugin) ) {
 			echo '</ul><p class="wpcu pro_reminder"><div class="wpcu yellowed">' .
 				__(
@@ -1270,7 +1272,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		} else {
 			do_action( 'wpcufpn_source_category_add_fields', $settings );
 		}
-		*/
+		
 		echo '</ul>';	//fields
 	}
 	
@@ -1315,18 +1317,18 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<option value="desc" ' . $source_asc_selected['desc'] . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
-		/*
+		
 		if( !class_exists(wpcuWPFnProPlugin) ) {
-			echo '</ul><p class="wpcu pro_reminder">' .
+			echo '</ul><p class="wpcu pro_reminder"><div class="wpcu yellowed">' .
 				__(
 						'Additional content source options are available with the optional ' .
 						'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">pro add-on</a>.'
 				) .
-			'</p><ul>';
+			'</div></p><ul>';
 		} else {
 			do_action( 'wpcufpn_source_page_add_fields', $settings );
 		}
-		*/
+		
 		echo '</ul>';	//fields
 	}
 	
@@ -1449,8 +1451,9 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	 */
 	public function insertPopup() {
 		?>
+		
 		<div id="wpcufpn-popup-wrap" class="media-modal wp-core-ui" style="display:none">
-			<a class="media-modal-close" href="javascript:tb_remove();" title="Close"><span class="media-modal-icon"></span></a>
+			<a class="media-modal-close" href="#" onClick="javascript:tb_remove();" title="Close"><span class="media-modal-icon"></span></a>
 			<div id="wpcufpn-select-content" class="media-modal-content">
 
 				<div class="wpcufpn-frame-title" style="margin-left: 30px;"><h1><?php echo __( 'WP Latest Posts', 'wpcufpn' ); ?></h1></div>

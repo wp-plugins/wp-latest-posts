@@ -65,9 +65,13 @@ Once the plugin is installed, just create your first news block and insert it in
 
 * 2.0.8 Initial (free) release
 
+ 
+
 == Changelog ==
 
-= 2.0.8 =
+= 2.0.9 : =
+* remove Uniform CSS and fix JS bug with 4.1
+= 2.0.8 : =
 * Initial release
 
 

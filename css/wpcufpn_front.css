@@ -21,7 +21,7 @@
 	position: absolute;
 	overflow: hidden;
 }
-.wpcufpn_container li {
+.entry-content .wpcufpn_container li,.wpcufpn_container li {
 	display: inline-block;
 	float: left;
 	margin: 0;
@@ -72,8 +72,6 @@
 	line-height: 1.15em;
 	max-width: 80%;
 	overflow: hidden;
-    border: none;
-    border-bottom: none !important;
 }
 
 .wpcufpn_container .title span {
@@ -85,7 +83,6 @@
 .wpcufpn_container .thumbnail {
 	display: block;
 	overflow: hidden;
-    border: none;
 }
 .wpcufpn_container .text,
 .wpcufpn_container .date {
