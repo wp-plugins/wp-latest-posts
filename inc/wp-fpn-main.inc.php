@@ -475,8 +475,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	 */
 	function addAdminStylesheets() {
 		
-		
-		
 		wp_register_style( 'uiStyleSheet', plugins_url( 'css/jquery-ui-custom.css', dirname( __FILE__ ) ) );
 		
 		wp_enqueue_style( 'uiStyleSheet' );
@@ -488,23 +486,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		wp_enqueue_style( 'unifStyleSheet' );
 	}
 	
-	/**
-	 * Change our custom post type icon
-	 * 
-	 */
-	/* Unused <- changed in admin css stylesheet
-	public function changeIcon() {
-		if( wpcuWPFnPlugin::CUSTOM_POST_NEWS_WIDGET_NAME != get_post_type() )
-			return;
-		?>
-		<style>
-		#icon-album.icon32.icon32-posts-wpcuwpfp-news-widget {
-			background:url('<?php plugins_url( self::EDIT_ICON, dirname( __FILE__ ) ) ?>') no-repeat;
-		}
-		</style>
-		<?php
-	}
-	*/
 	
 	/**
 	 * Customizes the default custom post type editor screen:
@@ -512,6 +493,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	 * - adds our own settings meta-boxes
 	 * 
 	 */
+	 
 	public function setupCustomMetaBoxes() {
 		remove_meta_box('slugdiv', self::CUSTOM_POST_NEWS_WIDGET_NAME, 'core');
 		remove_meta_box('authordiv', self::CUSTOM_POST_NEWS_WIDGET_NAME, 'core');

@@ -93,7 +93,8 @@ class wpcuFPN_Front {
 		/** for posts and page source_types **/
 		if( 
 				'src_category' == $this->widget->settings['source_type'] || 
-				'src_page' == $this->widget->settings['source_type']
+				'src_page' == $this->widget->settings['source_type'] || 
+				'src_custom_post_type' == $this->widget->settings['source_type'] 
 		) {
 			
 			/** source_types (post_type) **/
@@ -101,8 +102,12 @@ class wpcuFPN_Front {
 			if( 'src_category' == $this->widget->settings['source_type'] )
 				$post_type = 'post';
 			if( 'src_page' == $this->widget->settings['source_type'] )
-				$post_type = 'page';
-			
+				$post_type = 'page';			
+			if( 'src_custom_post_type' == $this->widget->settings['source_type']){
+				$post_type = $this->widget->settings["custom_post_type"]; 				
+			}
+				
+			 
 			/** source_order (order_by) **/
 			$order_by = 'date';
 			if( 'src_category' == $this->widget->settings['source_type'] ) {
@@ -121,10 +126,24 @@ class wpcuFPN_Front {
 				if( 'order' == $this->widget->settings['pg_source_order'] )
 					$order_by = 'menu_order';
 			}
+			if( 'src_custom_post_type' == $this->widget->settings['source_type'] ) {
+				if( 'date' == $this->widget->settings['cat_source_order'] )
+					$order_by = 'date';
+				if( 'title' == $this->widget->settings['cat_source_order'] )
+					$order_by = 'title';
+				if( 'order' == $this->widget->settings['cat_source_order'] )
+					$order_by = 'menu_order';
+			}
 			
 			/** source_asc (order) **/
 			$order = 'DESC';
 			if( 'src_category' == $this->widget->settings['source_type'] ) {
+				if( 'desc' == $this->widget->settings['cat_source_asc'] )
+					$order = 'DESC';
+				if( 'asc' == $this->widget->settings['cat_source_asc'] )
+					$order = 'ASC';
+			}
+			if( 'src_custom_post_type' == $this->widget->settings['source_type'] ) {
 				if( 'desc' == $this->widget->settings['cat_source_asc'] )
 					$order = 'DESC';
 				if( 'asc' == $this->widget->settings['cat_source_asc'] )
@@ -142,12 +161,34 @@ class wpcuFPN_Front {
 			if( $this->widget->settings['max_elts'] > 0 )
 				$limit = $this->widget->settings['max_elts'];
 			
+			
 			$args = array( 
 					'post_type'			=> $post_type,
 					'orderby'			=> $order_by,
 					'order' 			=> $order,
 					'posts_per_page' 	=> $limit
 			);
+			
+			if( 'src_custom_post_type' == $this->widget->settings['source_type']){
+				//$post_type = $this->widget->settings["custom_post_type"]; 			
+				if ($this->widget->settings['custom_post_taxonomy']) {
+					$args["tax_query"]=array(array(
+						'taxonomy' => $this->widget->settings['custom_post_taxonomy'],
+						'field'    => 'term_id'						
+					));					
+					if ($this->widget->settings['custom_post_term']) {
+						$args["tax_query"][0]['terms']=array($this->widget->settings['custom_post_term']);  
+					}else {
+						// get all terms in the taxonomy
+						$terms = get_terms( $this->widget->settings['custom_post_taxonomy'] ); 
+						// convert array of term objects to array of term IDs
+						$term_ids = wp_list_pluck( $terms, 'term_id' );
+						$args["tax_query"][0]['terms']=$term_ids;
+					}
+					
+				}
+			}
+				
 			
 			/** filter by category **/
 			if( 
@@ -159,6 +200,9 @@ class wpcuFPN_Front {
 			
 			
 			//$args = apply_filters( 'wpcufpn_src_category_args', $args );
+			/*echo "<pre>";
+				print_r($args);
+			echo "/<pre>";*/
 			
 			$posts = get_posts( $args );
 		}elseif(
@@ -172,7 +216,7 @@ class wpcuFPN_Front {
 			$limit = 10;
 			if( $this->widget->settings['max_elts'] > 0 )
 				$limit = $this->widget->settings['max_elts'];
-		
+			
 			
 			foreach( $this->widget->settings['source_tags'] as $tag ) {
 				if ($tag=="_all"){
@@ -187,7 +231,7 @@ class wpcuFPN_Front {
 				
 			}
 			
-			//var_dump($source_tag);
+			
 			
 			$args = array( 
 						'post_type'			=> $post_type,
@@ -891,14 +935,47 @@ class wpcuFPN_Front {
 		}
 		
 		if( 'Category' == $field ) {
-			$cats= get_the_category();
-			$listcat="";
 			
-			for ($i=0; $i < count($cats); $i++) {
-				if($i>0) 
-				$listcat.= " / ";
-				$listcat.=$cats[$i]->cat_name;
+			if ('src_custom_post_type' == $this->widget->settings['source_type']){
+				//$cats= get_the_taxonomies($this->widget->settings['custom_post_taxonomy']);
+				//var_dump($this->widget->settings['custom_post_term']);
+				//var_dump($this->widget->settings['custom_post_taxonomy']);
+				
+				$argstax=array();
+				
+				 $cats = wp_get_post_terms(get_the_ID(), $this->widget->settings['custom_post_taxonomy'],$argstax); 				 
+				 
+				if ($this->widget->settings['custom_post_term']) {
+					$cats = array(get_term_by( "id", $this->widget->settings['custom_post_term'], $this->widget->settings['custom_post_taxonomy'])); 
+				}
+				
+				 /*
+				 echo "<pre>";
+				 print_r($cats); 
+				  echo "</pre>";
+				  * */
+				$listcat="";
+			
+				for ($i=0; $i < count($cats); $i++) {
+					if($i>0) 
+					$listcat.= " / ";
+					$listcat.=$cats[$i]->name;
+				}
 			}
+			else {
+				$cats= get_the_category();
+				$listcat="";
+				
+				for ($i=0; $i < count($cats); $i++) {
+					if($i>0) 
+					$listcat.= " / ";
+					$listcat.=$cats[$i]->cat_name;
+				}
+			}
+			
+			
+			
+			
 			return $listcat;
 		}
 		
