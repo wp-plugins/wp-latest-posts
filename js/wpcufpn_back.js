@@ -8,18 +8,20 @@
 		
 		
 		
-		/** Theme preview drop-down **/
-		$('select#theme').change( function(e){
-			var theme_img = themes[$(this).val()]['theme_url']+'/screenshot.png';
-			
+		
+		
+		ThemeChange($('select#theme'),true);
+		
+		function ThemeChange(object,first){
+			var theme_img = themes[object.val()]['theme_url']+'/screenshot.png';
+			console.log(theme_img);
 			/*
 			 * 
 			 * If theme is Premium > disable Option
 			 * else theme is defautl > enable Option
 			 * 
 			 */
-			
-			if ($(this).val().indexOf("masonry") > -1) {
+			if (object.val().indexOf("masonry") > -1) {
 				$("#wpcufpn_config_zone,#wpcufpn_config_animation").addClass("disabled");
 				$("#wpcufpn_config_color,#colorPicker .color").removeClass("disabled");
 				
@@ -32,7 +34,7 @@
 				if ($("ul.arrow_col").hasClass("ui-sortable"))				
 					$('ul.arrow_col, .drop_zone_col .wpcu-inner-admin-block ul').sortable( "disable" );
 				
-			} else if ($(this).val().indexOf("smooth") > -1) { 
+			} else if (object.val().indexOf("smooth") > -1) { 
 				$("#wpcufpn_config_zone,#wpcufpn_config_animation").addClass("disabled");
 				$("#wpcufpn_config_color,#colorPicker .color").removeClass("disabled");
 				$("#amount_pages,#amount_cols,#pagination,#amount_rows").closest(".field").addClass("disabled");
@@ -40,7 +42,7 @@
 				$('#wpcufpn_config_animation input,#wpcufpn_config_animation select,#amount_pages,#pagination,#amount_cols,#amount_rows').attr('disabled','disabled');
 				if ($("ul.arrow_col").hasClass("ui-sortable"))	
 					$('ul.arrow_col, .drop_zone_col .wpcu-inner-admin-block ul').sortable( "disable" );
-			} else if ($(this).val().indexOf("timeline") > -1) { 
+			} else if (object.val().indexOf("timeline") > -1) { 
 				$("#wpcufpn_config_zone,#wpcufpn_config_animation").addClass("disabled");
 				$("#wpcufpn_config_color,#colorPicker .color").removeClass("disabled");
 				$("#amount_pages,#amount_cols,#pagination,#amount_rows").closest(".field").addClass("disabled");
@@ -58,13 +60,31 @@
 				dragandDropinnerBlock();
 				$('ul.arrow_col, .drop_zone_col .wpcu-inner-admin-block ul').sortable( "enable" );
 			}
-			
-			$('.wpcufpn-theme-preview img').fadeOut(200, function(){
-				$(this).attr('src',theme_img).bind('onreadystatechange load', function(){
-					if (this.complete) $(this).fadeIn(400);
+			if (!first){
+				$('.wpcufpn-theme-preview img').fadeOut(200, function(){
+					$(this).attr('src',theme_img).bind('onreadystatechange load', function(){
+						if (this.complete) $(this).fadeIn(400);
+					});
 				});
-			});
+			}
+			
+		}
+		
+		
+		
+		/** Theme preview drop-down **/
+		$('select#theme').change( function(e){			
+			ThemeChange($(this));
 		});
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		dragandDropinnerBlock();
 		

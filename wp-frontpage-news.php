@@ -3,7 +3,7 @@
  Plugin Name: WP Latest Posts
  Plugin URI: http://www.joomunited.com/wordpress-products/wp-latest-posts
  Description: Advanced frontpage and widget news slider
- Version: 3.0.2
+ Version: 3.0.3
  Author: JoomUnited
  Author URI: http://www.joomunited.com
  License: GPL2

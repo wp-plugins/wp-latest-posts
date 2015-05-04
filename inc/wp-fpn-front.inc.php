@@ -737,8 +737,6 @@ class wpcuFPN_Front {
 	private function field( $field ) {
 		global $post;
 		
-		remove_filter( 'excerpt_more', 'twentyeleven_auto_excerpt_more' );
-		remove_filter( 'get_the_excerpt', 'twentyeleven_custom_excerpt_more' );
 		
 		/** Title field **/
 		if( 'Title' == $field ) {
@@ -779,7 +777,11 @@ class wpcuFPN_Front {
 		if( 'Text' == $field ) {
 			$before = $after = '';
 		
-			$text = get_the_excerpt();
+			$text = $post->post_content;
+			$text = strip_shortcodes( $text );	
+			$text = apply_filters( 'the_content', $text );
+			$text = str_replace(']]>', ']]&gt;', $text);	
+			$text = wp_trim_words($text,55,"");
 				
 			if( $this->widget->settings['crop_text'] == 0 ) { 	// word cropping
 				if( function_exists( 'wp_trim_words' ) )

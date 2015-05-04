@@ -3,6 +3,19 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.0.3:
+* Remove Filter Text Field
+* Fix JS Issue Admin
+
+Revision 3.0.2:
+* Category display fix issue #2
+
+Revision 3.0.1:
+* Custom Taxonomies and Terms of CPT fix issue #1
+
+Revision 3.0.0:
+* Custom Post Type Core Include
+
 Revision 2.0.9:
  * remove Uniform CSS and fix JS bug with 4.1
 
