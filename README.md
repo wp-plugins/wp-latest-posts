@@ -3,6 +3,9 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.0.4:
+* Change Image default
+
 Revision 3.0.3:
 * Remove Filter Text Field
 * Fix JS Issue Admin

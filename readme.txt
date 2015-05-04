@@ -1,6 +1,6 @@
 === WP Latest Posts ===
 Contributors: JoomUnited
-Tags: latest post, widget, recent posts, posts, plugin, automatic, custom, previous posts, page, featured image, first image, featured posts, custom post type, woocommerce
+Tags: latest post, widget, recent posts, posts, plugin, automatic, custom, previous posts, page, featured image, first image, featured posts
 Requires at least: 4.0
 Tested up to: 4.2.1
 Stable tag: trunk
@@ -57,8 +57,6 @@ You can create unlimited news block and add them in the editor or as widget.
 * Time line theme
 * Unlimited sidebar widget instances
 * Multiple instance per page
-* Custom post type support
-* Woocommerce support
 * Automatic cropping of title using number of words, characters or lines
 * Automatic cropping of text excerpt using number of word, characters or lines
 * Automatic animation of sliders
@@ -97,6 +95,8 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Revisions ==
 
+* 3.0.4 Change Image default
+* 3.0.3 Fix Filter Text Issue
 * 3.0.2 Custom Post Type Core Include
 * 2.0.9 WordPress 4.1 support
 * 2.0.8 Initial (free) release
@@ -105,6 +105,11 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Changelog ==
 
+= 3.0.4 : =
+* Change Image default
+= 3.0.3 : =
+* Remove Filter Text Field
+* Fix JS Issue Admin
 = 3.0.2 : =
 * Custom Post Type Core Include
 = 2.0.9 : =
