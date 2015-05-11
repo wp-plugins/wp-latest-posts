@@ -23,7 +23,9 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	private $_field_defaults = array(
 		'default_img'			=> '',
 		'source_type'			=> 'src_category',
-		'cat_source_order'		=> 'date',
+		'cat_post_source_order'	=> 'date',
+		'cat_post_source_asc'	=> 'desc',
+		'cat_source_order'		=> 'date', 
 		'cat_source_asc'		=> 'desc',
 		'pg_source_order'		=> 'order',
 		'pg_source_asc'			=> 'desc',
@@ -52,6 +54,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		'margin_left'			=> 0,
 		'margin_top'			=> 0,
 		'margin_right'			=> 4,
+		'custom_css'			=> '',
 		'margin_bottom'			=> 4,
 		'date_fmt'				=> '',
 		'read_more'				=> '',
@@ -1063,7 +1066,9 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<li class="field"><label for="date_fmt" class="coltab">' . __( 'Date format', 'wpcufpn' ) . '</label>' .
 			'<input id="date_fmt" type="text" name="wpcufpn_date_fmt" value="' . htmlspecialchars( isset($settings['date_fmt'])?$settings['date_fmt']:'' ) . '" class="short-text" /></li>';
 		
+		
 		echo '</ul>';	//fields
+		
 		
 		if( !class_exists(wpcuWPFnProPlugin) ) {
 			echo '<div class="wpcu yellowed halfed">';
@@ -1073,7 +1078,12 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		} else {
 			do_action( 'wpcufpn_displayadvanced_add_fields', $settings );
 		}
-				
+		
+			
+		echo '<hr/><div><label for="custom_css" class="coltab">' . __( 'Custom CSS', 'wpcufpn' ) . '</label>' .
+			'<textarea id="custom_css" cols="100" rows="5" name="wpcufpn_custom_css">' . ( isset($settings['custom_css'])?$settings['custom_css']:'' ) . '</textarea></div>';
+		
+		 
 	}
 	
 	/**
@@ -1207,10 +1217,10 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			$source_cat_checked[$cat] = ' checked="checked"';
 		};
 		
-		if( isset($settings['cat_source_order']) )
-			$source_order_selected[$settings['cat_source_order']] = ' selected="selected"';
-		if( isset($settings['cat_source_asc']) )
-			$source_asc_selected[$settings['cat_source_asc']] = ' selected="selected"';
+		if( isset($settings['cat_post_source_order']) )
+			$source_order_selected[$settings['cat_post_source_order']] = ' selected="selected"';
+		if( isset($settings['cat_post_source_asc']) )
+			$source_asc_selected[$settings['cat_post_source_asc']] = ' selected="selected"';
 		
 		echo '<ul class="fields">';
 		
@@ -1228,8 +1238,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</li>';	//field
 		
 		echo '<li class="field">';
-		echo '<label for="cat_source_order" class="coltab">' . __( 'Order by', 'wpcufpn' ) . '</label>';
-		echo '<select name="wpcufpn_cat_source_order" id="cat_source_order" >';
+		echo '<label for="cat_post_source_order" class="coltab">' . __( 'Order by', 'wpcufpn' ) . '</label>';
+		echo '<select name="wpcufpn_cat_post_source_order" id="cat_post_source_order" >';
 		echo '<option value="date" ' . $source_order_selected['date'] . '>' . __( 'By date', 'wpcufpn' ) . '</option>';
 		echo '<option value="title" ' . $source_order_selected['title'] . '>' . __( 'By title', 'wpcufpn' ) . '</option>';
 		//echo '<option value="order" ' . $source_order_selected['order'] . '>' . __( 'By order', 'wpcufpn' ) . '</option>';
@@ -1237,8 +1247,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</li>';	//field
 		
 		echo '<li class="field">';
-		echo '<label for="cat_source_asc" class="coltab">' . __( 'News sort order', 'wpcufpn' ) . '</label>';
-		echo '<select name="wpcufpn_cat_source_asc" id="cat_source_asc">';
+		echo '<label for="cat_post_source_asc" class="coltab">' . __( 'News sort order', 'wpcufpn' ) . '</label>';
+		echo '<select name="wpcufpn_cat_post_source_asc" id="cat_post_source_asc">';
 		echo '<option value="asc" ' . $source_asc_selected['asc'] . '>' . __( 'Ascending', 'wpcufpn' ) . '</option>';
 		echo '<option value="desc" ' . $source_asc_selected['desc'] . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
 		echo '</select>';

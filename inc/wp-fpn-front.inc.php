@@ -33,9 +33,11 @@ class wpcuFPN_Front {
 		if (strpos($this->widget->settings["theme"],'timeline'))
 			$this->resetsettingsPremium();
 		
-		$this->posts	= $this->queryPosts();
-		//var_dump($this->posts);
-		$this->prepared = true;
+		$this->posts	 = $this->queryPosts();
+		
+		// Hook WP
+		add_action('wp_footer',array( $this, 'customCSS' ),20);
+		$this->prepared  = true;
 		
 		//TODO: boxes setup will depend on theme template + pro filter
 		$this->boxes = array( 'top', 'left', 'right', 'bottom' );
@@ -111,11 +113,11 @@ class wpcuFPN_Front {
 			/** source_order (order_by) **/
 			$order_by = 'date';
 			if( 'src_category' == $this->widget->settings['source_type'] ) {
-				if( 'date' == $this->widget->settings['cat_source_order'] )
+				if( 'date' == $this->widget->settings['cat_post_source_order'] )
 					$order_by = 'date';
-				if( 'title' == $this->widget->settings['cat_source_order'] )
+				if( 'title' == $this->widget->settings['cat_post_source_order'] )
 					$order_by = 'title';
-				if( 'order' == $this->widget->settings['cat_source_order'] )
+				if( 'order' == $this->widget->settings['cat_post_source_order'] )
 					$order_by = 'menu_order';
 			}
 			if( 'src_page' == $this->widget->settings['source_type'] ) {
@@ -138,9 +140,9 @@ class wpcuFPN_Front {
 			/** source_asc (order) **/
 			$order = 'DESC';
 			if( 'src_category' == $this->widget->settings['source_type'] ) {
-				if( 'desc' == $this->widget->settings['cat_source_asc'] )
+				if( 'desc' == $this->widget->settings['cat_post_source_asc'] )
 					$order = 'DESC';
-				if( 'asc' == $this->widget->settings['cat_source_asc'] )
+				if( 'asc' == $this->widget->settings['cat_post_source_asc'] )
 					$order = 'ASC';
 			}
 			if( 'src_custom_post_type' == $this->widget->settings['source_type'] ) {
@@ -199,11 +201,11 @@ class wpcuFPN_Front {
 				$args['category__in'] 	= $this->widget->settings['source_category'];
 			
 			
-			//$args = apply_filters( 'wpcufpn_src_category_args', $args );
+			$args = apply_filters( 'wpcufpn_src_category_args', $args, $settings = $this->widget->settings);
 			/*echo "<pre>";
 				print_r($args);
-			echo "/<pre>";*/
-			
+			echo "/<pre>";
+			*/
 			$posts = get_posts( $args );
 		}elseif(
 				'src_tags' == $this->widget->settings['source_type'] 
@@ -252,6 +254,16 @@ class wpcuFPN_Front {
 		
 		return
 			$this->posts = apply_filters( 'wpcufpn_front_queryposts', $posts, $this->widget );
+	}
+	
+	
+	/**
+	 * add Custom CSS in HTML footer
+	 * 
+	 */
+	public function customCSS() {
+		$customCSS = $this->widget->settings['custom_css'];
+		echo '<style>'.$customCSS.'</style>';
 	}
 	
 	/**
