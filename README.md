@@ -3,6 +3,9 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.0.6:
+* Add List in Pages filter
+
 Revision 3.0.5:
 * Fix Order filter
 * Add Custom CSS Field

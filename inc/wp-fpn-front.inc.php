@@ -190,6 +190,13 @@ class wpcuFPN_Front {
 					
 				}
 			}
+			
+			/** include specifics pages **/
+			if( 'src_page' == $this->widget->settings['source_type'] ) {
+				if (!in_array("_all", $this->widget->settings['source_pages'])) {
+				   $args["post__in"]=$this->widget->settings['source_pages'];
+				}
+			}
 				
 			
 			/** filter by category **/

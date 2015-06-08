@@ -1288,10 +1288,24 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		echo '<li class="field">';
 		echo '<ul>';
-		echo '<li><input id="pages_all" type="checkbox" name="source_pages[]" value="_all" checked="checked"  disabled="disabled" />' .
+		
+		
+		
+		if( !class_exists(wpcuWPFnProPlugin) ) {
+			echo '<li><input id="pages_all" type="checkbox" name="wpcufpn_source_pages[]" value="_all" checked="checked"  disabled="disabled" />' .
 				'<label for="pages_all" class="post_cb">All</li>';
+			echo '<li><p class="wpcu pro_reminder"><div class="wpcu yellowed">' .
+				__(
+						'Additional content source options are available with the optional ' .
+						'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">pro add-on</a>.'
+				) .
+			'</div></p></li>';
+		} else {
+			do_action( 'wpcufpn_source_page_add_fields', $settings );
+		}
+
 		echo '</ul>';
-		echo '</li>';	//field
+		echo '</li>';	//field		
 		
 		echo '<li class="field">';
 		echo '<label for="pg_source_order" class="coltab">' . __( 'Order by', 'wpcufpn' ) . '</label>';
@@ -1309,17 +1323,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<option value="desc" ' . $source_asc_selected['desc'] . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
-		
-		if( !class_exists(wpcuWPFnProPlugin) ) {
-			echo '</ul><p class="wpcu pro_reminder"><div class="wpcu yellowed">' .
-				__(
-						'Additional content source options are available with the optional ' .
-						'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">pro add-on</a>.'
-				) .
-			'</div></p><ul>';
-		} else {
-			do_action( 'wpcufpn_source_page_add_fields', $settings );
-		}
 		
 		echo '</ul>';	//fields
 	}
