@@ -95,6 +95,7 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Revisions ==
 
+* 3.0.7 Enable Crop text in grid theme
 * 3.0.6 Add List in Pages filter
 * 3.0.5 Fix Order filter, Add Custom CSS Field, Add After/before Date created filter
 * 3.0.4 Change Image default
@@ -107,6 +108,8 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Changelog ==
 
+= 3.0.7 : =
+* Enable Crop text in grid theme
 = 3.0.6 : =
 * Add List in Pages filter
 = 3.0.5 : =

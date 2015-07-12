@@ -761,8 +761,8 @@ class wpcuFPN_Front {
 		if( 'Title' == $field ) {
 			$before = $after = '';
 			
-			$title = get_the_title();
-				
+			$title = get_the_Title();
+			
 			if( $this->widget->settings['crop_title'] == 0 ) { 	// word cropping
 				if( function_exists( 'wp_trim_words' ) )
 					$title = wp_trim_words( $title, $this->widget->settings['crop_title_len']);
@@ -770,18 +770,9 @@ class wpcuFPN_Front {
 			if( $this->widget->settings['crop_title'] == 1 ) { 	// char cropping
 				$title = strip_tags($title);
 				$title = mb_substr($title, 0, $this->widget->settings['crop_title_len']);
-				$title = mb_substr($title, 0, mb_strripos($title, " "));
 			}
 			if( $this->widget->settings['crop_title'] == 2 ) {	// line limitting
 				$style = 'height:' . ( $this->widget->settings['crop_title_len'] * self::TITLE_EM_SIZE ) . 'em';
-				//$style = 'max-height:' . ( $this->widget->settings['crop_title_len'] * self::TITLE_EM_SIZE ) . 'em';
-				
-				/*
-				if( 1 == $this->widget->settings['crop_title_len'] )
-					$style .= ';white-space:nowrap';
-				*/
-				
-				/** Limit lines **/
 				if( 1 == $this->widget->settings['crop_title_len'] ) {
 					$before = '<span style="' . $style . '" class="line_limit">';
 				} else {
@@ -789,6 +780,15 @@ class wpcuFPN_Front {
 				}
 				$after = '</span>';
 			}
+			
+			if( $this->widget->settings['crop_title'] == 2 && 1 == $this->widget->settings['crop_title_len'] ) {
+				$before = '<span style="' . $style . '" class="line_limit">';
+			} else {
+				$before = '<span style="' . $style . '" class="line_limit nowrap">';
+			}
+			
+			$after = '</span>';
+			
 			return $before . $title . $after;
 		}
 		
@@ -805,15 +805,18 @@ class wpcuFPN_Front {
 			if( $this->widget->settings['crop_text'] == 0 ) { 	// word cropping
 				if( function_exists( 'wp_trim_words' ) )
 					$text = wp_trim_words( $text, $this->widget->settings['crop_text_len']);
+				$text.= "...";
 			}
 			if( $this->widget->settings['crop_text'] == 1 ) { 	// char cropping
 				$text = strip_tags($text);
 				$text = mb_substr($text, 0, $this->widget->settings['crop_text_len']);
 				$text = mb_substr($text, 0, mb_strripos($text, " "));
+				$text.= "...";
 			}
 			if( $this->widget->settings['crop_text'] == 2 ) { 	// line limitting
 				$before = '<span style="max-height:' . ($this->widget->settings['crop_text_len'] * self::TEXT_EM_SIZE ) . 'em" class="line_limit">';
 				$after = '</span>';
+				$text.= "...";
 			}
 				
 			return $before . $text . $after;

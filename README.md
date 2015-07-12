@@ -3,10 +3,13 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.0.7:
+* Enable Crop text in grid theme
+
 Revision 3.0.6:
 * Add List in Pages filter
 
-Revision 3.0.5:
+Revision 3.0.5: 
 * Fix Order filter
 * Add Custom CSS Field
 * Add After/before Date created filter
