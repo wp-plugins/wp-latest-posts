@@ -3,6 +3,9 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.0.9:
+* Add htmlentities in "alt" attribute
+
 Revision 3.0.8:
 * Add 'Post content' or 'Excerpt content' settings in advanced tabs
 

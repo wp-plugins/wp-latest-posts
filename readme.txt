@@ -94,7 +94,7 @@ Once the plugin is installed, just create your first news block and insert it in
 
 
 == Revisions ==
-
+* 3.0.9 Add htmlentities in "alt" attribute
 * 3.0.8 Add 'Post content' or 'Excerpt content' settings in advanced tabs
 * 3.0.7 Enable Crop text in grid theme
 * 3.0.6 Add List in Pages filter
@@ -109,6 +109,8 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Changelog ==
 
+= 3.0.9 : =
+* Add htmlentities in "alt" attribute
 = 3.0.8 : =
 * Add 'Post content' or 'Excerpt content' settings in advanced tabs
 = 3.0.7 : =

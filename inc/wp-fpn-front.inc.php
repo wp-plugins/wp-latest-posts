@@ -761,7 +761,7 @@ class wpcuFPN_Front {
 		if( 'Title' == $field ) {
 			$before = $after = '';
 			
-			$title = get_the_Title();
+			$title = $post->post_title;
 			
 			if( $this->widget->settings['crop_title'] == 0 ) { 	// word cropping
 				if( function_exists( 'wp_trim_words' ) )
@@ -861,7 +861,7 @@ class wpcuFPN_Front {
 					$imgsrc[0]=$this->widget->settings['default_img'];
 			
 			
-			$img = '<img src="' . $imgsrc[0] . '"  alt="' . get_the_title() . '"  class="wpcufpn_default" />';			
+			$img = '<img src="' . $imgsrc[0] . '"  alt="'.htmlentities($post->post_title).'"  class="wpcufpn_default" />';			
 			$before = '<span class="img_cropper '. get_post_format().'">';
 			$after = '</span>';
 						
