@@ -2,7 +2,7 @@
 Contributors: JoomUnited
 Tags: latest post, widget, recent posts, posts, plugin, automatic, custom, previous posts, page, featured image, first image, featured posts
 Requires at least: 4.0
-Tested up to: 4.2.2
+Tested up to: 4.2.4
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -95,6 +95,7 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Revisions ==
 
+* 3.0.8 Add 'Post content' or 'Excerpt content' settings in advanced tabs
 * 3.0.7 Enable Crop text in grid theme
 * 3.0.6 Add List in Pages filter
 * 3.0.5 Fix Order filter, Add Custom CSS Field, Add After/before Date created filter
@@ -108,6 +109,8 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Changelog ==
 
+= 3.0.8 : =
+* Add 'Post content' or 'Excerpt content' settings in advanced tabs
 = 3.0.7 : =
 * Enable Crop text in grid theme
 = 3.0.6 : =

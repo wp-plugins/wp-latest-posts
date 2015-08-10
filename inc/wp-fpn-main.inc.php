@@ -1066,6 +1066,13 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<li class="field"><label for="date_fmt" class="coltab">' . __( 'Date format', 'wpcufpn' ) . '</label>' .
 			'<input id="date_fmt" type="text" name="wpcufpn_date_fmt" value="' . htmlspecialchars( isset($settings['date_fmt'])?$settings['date_fmt']:'' ) . '" class="short-text" /></li>';
 		
+		echo '<li class="field"><label for="text_content" class="coltab">' . __( 'Text Content', 'wpcufpn' ) . '</label>' .
+		    '<select name="wpcufpn_text_content" id="text_content">' .
+			'<option value="0" ' . (($settings['text_content']=="0")?"selected":'')  . ' class="short-text">Full content</option>' .
+			'<option value="1" ' . (($settings['text_content']=="1")?"selected":'')  . ' class="short-text">Excerpt content</option>' .
+			'</select> </li>'; 
+			 
+		
 		
 		echo '</ul>';	//fields
 		

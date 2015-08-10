@@ -797,6 +797,13 @@ class wpcuFPN_Front {
 			$before = $after = '';
 		
 			$text = $post->post_content;
+			if (isset($this->widget->settings["text_content"]) && $this->widget->settings["text_content"]=="0") {
+				$text = $post->post_content;
+			}
+			else if (isset($this->widget->settings["text_content"]) && $this->widget->settings["text_content"]=="1"){
+				$text = $post->post_excerpt;
+			}
+			
 			$text = strip_shortcodes( $text );	
 			$text = apply_filters( 'the_content', $text );
 			$text = str_replace(']]>', ']]&gt;', $text);	
