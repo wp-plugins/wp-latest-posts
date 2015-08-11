@@ -363,10 +363,24 @@ class wpcuFPN_Front {
 			.$this->widget->ID
 			."&nbrow="
 			.($this->widget->settings['amount_rows']?$this->widget->settings['amount_rows']:0)
+			."&pagination="
+			.$this->widget->settings['pagination']
 			."&autoanimate="
 			.$this->widget->settings['autoanimation']
 			."&autoanimatetrans="
-			.$this->widget->settings['autoanimation_trans']);
+			.$this->widget->settings['autoanimation_trans']
+			."&animationloop="
+			.$this->widget->settings['autoanim_loop']
+			."&slideshowspeed="
+			.$this->widget->settings['autoanim_slideshowspeed']
+			."&slidespeed="
+			.$this->widget->settings['autoanim_slidespeed']
+			."&pausehover="
+			.$this->widget->settings['autoanim_pause_hover']
+			."&pauseaction="
+			.$this->widget->settings['autoanim_pause_action']
+			."&slidedirection="
+			.$this->widget->settings['autoanimation_slidedir']);
 			
 			
 		} else {
@@ -386,7 +400,24 @@ class wpcuFPN_Front {
 			."&autoanimate="
 			.$this->widget->settings['autoanimation']
 			."&autoanimatetrans="
-			.$this->widget->settings['autoanimation_trans']);
+			.$this->widget->settings['autoanimation_trans']
+			."&animationloop="
+			.$this->widget->settings['autoanim_loop']
+			."&slideshowspeed="
+			.$this->widget->settings['autoanim_slideshowspeed']
+			."&slidespeed="
+			.$this->widget->settings['autoanim_slidespeed']
+			."&pausehover="
+			.$this->widget->settings['autoanim_pause_hover']
+			."&pauseaction="
+			.$this->widget->settings['autoanim_pause_action']
+			."&slidedirection="
+			.$this->widget->settings['autoanimation_slidedir']
+			);
+			
+			
+			
+			
 			
 		}
 	}
@@ -949,6 +980,8 @@ class wpcuFPN_Front {
 				$style .= 'margin-bottom:' . $this->widget->settings['margin_bottom'] . 'px;';
 			if( isset($this->widget->settings['margin_left']) && $this->widget->settings['margin_left'] > 0 )
 				$style .= 'margin-left:' . $this->widget->settings['margin_left'] . 'px;';
+			
+			$style .= 'max-width:100%;';
 			
 			$before = '<span class="img_cropper" style="' . $style . '">';
 			$after = '</span>';

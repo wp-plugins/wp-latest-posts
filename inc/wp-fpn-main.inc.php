@@ -785,7 +785,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		}
 		
 		$classdisabledsmooth="";
-		if (strpos($settings["theme"],'smooth') || strpos($settings["theme"],'timeline') ){
+		if (strpos($settings["theme"],'timeline') ){
 			$classdisabledsmooth=" disabled";
 		}
 		

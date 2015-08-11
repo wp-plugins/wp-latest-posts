@@ -26,6 +26,7 @@
 	float: left;
 	margin: 0;
 	text-align: left;
+	vertical-align: top;
 	/*
 	padding: 0 0 3px 1px;
 	box-sizing: border-box;
@@ -206,6 +207,11 @@ div.wpcufpn_nav .pagi_p.squarebullet.active {
 
 .wpcufpn_container.default li {
 	float: none;
+}
+
+.wpcufpn_container.default li:before,
+.wpcufpn_container.default li:after {
+	content: none;
 }
 
 

@@ -3,6 +3,9 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.1.0:
+* Add multiple settings in animation block
+
 Revision 3.0.9:
 * Add htmlentities in "alt" attribute
 

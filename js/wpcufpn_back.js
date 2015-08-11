@@ -35,17 +35,21 @@
 					$('ul.arrow_col, .drop_zone_col .wpcu-inner-admin-block ul').sortable( "disable" );
 				
 			} else if (object.val().indexOf("smooth") > -1) { 
-				$("#wpcufpn_config_zone,#wpcufpn_config_animation").addClass("disabled");
-				$("#wpcufpn_config_color,#colorPicker .color").removeClass("disabled");
-				$("#amount_pages,#amount_cols,#pagination,#amount_rows").closest(".field").addClass("disabled");
+				$("#wpcufpn_config_animation").removeClass("disabled");
+				$("#wpcufpn_config_zone").addClass("disabled");
 				
-				$('#wpcufpn_config_animation input,#wpcufpn_config_animation select,#amount_pages,#pagination,#amount_cols,#amount_rows').attr('disabled','disabled');
+				$("#wpcufpn_config_color,#colorPicker .color").removeClass("disabled");
+				$("#amount_pages,#amount_cols,#amount_rows,#autoanimation_trans,#autoanimation_slidedir").closest(".field").addClass("disabled");
+				
+				
+				
+				$('#amount_pages,#amount_cols,#amount_rows,#autoanimation_trans,#autoanimation_slidedir').attr('disabled','disabled');
 				if ($("ul.arrow_col").hasClass("ui-sortable"))	
 					$('ul.arrow_col, .drop_zone_col .wpcu-inner-admin-block ul').sortable( "disable" );
 			} else if (object.val().indexOf("timeline") > -1) { 
 				$("#wpcufpn_config_zone,#wpcufpn_config_animation").addClass("disabled");
 				$("#wpcufpn_config_color,#colorPicker .color").removeClass("disabled");
-				$("#amount_pages,#amount_cols,#pagination,#amount_rows").closest(".field").addClass("disabled");
+				$("#amount_pages,#amount_cols,#pagination,#amount_rows,#autoanimation_trans,#autoanimation_slidedir").closest(".field").addClass("disabled");
 				
 				$('#wpcufpn_config_animation input,#wpcufpn_config_animation select,#amount_pages,#pagination,#amount_cols,#amount_rows').attr('disabled','disabled');
 				if ($("ul.arrow_col").hasClass("ui-sortable"))	
@@ -55,8 +59,8 @@
 				
 				$("#wpcufpn_config_zone,#wpcufpn_config_animation").removeClass("disabled");
 				$("#wpcufpn_config_color,#colorPicker .color").addClass("disabled");
-				$("#amount_pages,#amount_cols,#pagination,#amount_rows").closest(".field").removeClass("disabled");
-				$('#wpcufpn_config_animation input,#wpcufpn_config_animation select,#amount_pages,#pagination,#amount_cols,#amount_rows').removeAttr('disabled');
+				$("#amount_pages,#amount_cols,#pagination,#amount_rows,#autoanimation_trans,#autoanimation_slidedir").closest(".field").removeClass("disabled");
+				$('#wpcufpn_config_animation input,#wpcufpn_config_animation select,#amount_pages,#pagination,#amount_cols,#amount_rows,#autoanimation_trans,#autoanimation_slidedir').removeAttr('disabled');
 				dragandDropinnerBlock();
 				$('ul.arrow_col, .drop_zone_col .wpcu-inner-admin-block ul').sortable( "enable" );
 			}

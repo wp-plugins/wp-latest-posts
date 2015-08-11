@@ -75,10 +75,76 @@
 		  $autoanmitrans = ' animation: "slide",';
 	  break;
 	 }	
-			// 0 = fade 
-			// 1 = slide
+	
+		// 0 = true 
+		// 1 = false
+	$autoanmiloop = ' animationLoop: false,';	
+	 if (isset($_GET['animationloop'])){
+		switch($_GET['animationloop']){
+		  case "0":
+			  $autoanmiloop = ' animationLoop: true,';
+		  break;
+		  case '1':
+			  $autoanmiloop = ' animationLoop: false,';
+		  break;
+		 }	
+	}
+	
+	$pausehover = ' pauseOnHover: false,';	
+	 if (isset($_GET['pausehover'])){
+		switch($_GET['pausehover']){
+		  case "0":
+			  $pausehover = ' pauseOnHover: true,';	
+		  break;
+		  case '1':
+			  $pausehover = ' pauseOnHover: false,';	
+		  break;
+		 }	
+	 }	
+	
+	$pauseaction = ' pauseOnAction: true,';	
+	 if (isset($_GET['pauseaction'])){
+			switch($_GET['pauseaction']){
+			  case "0":
+				  $pauseaction = ' pauseOnAction: true,';	
+			  break;
+			  case '1':
+				  $pauseaction = ' pauseOnAction: false,';	
+			  break;
+			 }		
+	 }	
 	 
 	 
+	 
+	$direction= ' direction: "horizontal",';
+	 if (isset($_GET['slidedirection'])){
+			switch($_GET['slidedirection']){
+			  case "0":
+				  $direction= ' direction: "horizontal",';	
+			  break;
+			  case '1':
+				  $direction= ' direction: "vertical",';
+			  break;
+			 }		
+	 }	
+	 
+	
+			
+	$slideshowspeed=' slideshowSpeed: 7000,';	
+	
+	 if (isset($_GET['slideshowspeed']) && is_numeric($_GET['slideshowspeed'])){
+		  $slideshowspeed = ' slideshowSpeed: '.$_GET['slideshowspeed'].',';
+	}	
+	 
+	 $slidespeed=' animationSpeed: 600,';
+	  if (isset($_GET['slidespeed']) && is_numeric($_GET['slidespeed'])){
+	 
+		  $slidespeed = ' animationSpeed: '.$_GET['slidespeed'].',';
+	}	
+	  
+	  
+	  
+	  
 	 ?>
 	 
 	 
@@ -86,11 +152,16 @@
 	  $(window).load(function() {
 	    $("#wpcufpn_widget_<?php echo $_GET['id']; ?>").flexslider({
 	      //animation: "slide",
-	      animationLoop: false,
 	      selector: ".defaultflexslide > .parent",
 	      <?php echo $autoanmi;?>
+	      <?php echo $direction;?>
 	      <?php echo $autoanmitrans;?>
-	      <?php echo $nav;?>
+	      <?php echo $autoanmiloop;?>
+	      <?php echo $slideshowspeed;?>
+	      <?php echo $slidespeed;?>
+	      <?php echo $pausehover;?>
+	      <?php echo $pauseaction;?>
+	      <?php echo $nav;?>	      
 	      //animationLoop: true,
 	      //itemWidth: 600,
 	      //itemMargin: 10,
