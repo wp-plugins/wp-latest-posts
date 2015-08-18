@@ -147,6 +147,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		/** Register our shortcode **/
 		add_shortcode('frontpage_news', array($this, 'applyShortcode'));
 		
+		
+		
 		if( is_admin() ) {
 			
 			/** Load tabs ui + drag&drop ui **/
@@ -182,7 +184,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			add_action( 'wp_print_styles',	array( $this, 'addFonts' ) );
 
 			/** Load our front-end slide control script **/
-			add_action( 'wp_print_scripts', array( $this, 'addFrontScript' ) );
+			add_action( 'wp_print_scripts', array( $this, 'addFrontScript' ),0 );
+			add_action( 'the_posts' , array($this, 'prefixEnqueue'),100);
 			//add_action( 'after_setup_theme', array( $this, 'child_theme_setup' ) );
 		}
 	}
@@ -1519,6 +1522,57 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		foreach( $widgets as $widget )
 			echo "wpcufpn_widgets['$widget->ID']='$widget->post_title';\n";
 		echo '</script>';
+	}
+	
+	
+	/**
+	 * Add Style and script in head and footer
+	 * 
+	 */
+	public function prefixEnqueue ($posts) {
+		if ( empty($posts) || is_admin() )
+			return $posts;
+		$pattern = get_shortcode_regex();
+		foreach ($posts as $post) {			
+			preg_match_all('/'.$pattern.'/s', $post->post_content, $matches);
+			/*echo "<pre>";
+			print_r($matches);
+			echo "</pre>";*/
+			$widgetIDArray=array();
+			$trig=false;
+			foreach ($matches[2] as $matche => $matchkey) {
+				if ($matchkey == 'frontpage_news') {
+					$widgetIDArray[]=$matche;
+				}					
+			}
+			foreach ($widgetIDArray as $widgetIDitem) {
+					preg_match('/widget="(.*?)"/s', $matches[3][$widgetIDitem], $widgetID);
+					$widget = get_post( $widgetID[1] );
+					$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
+					$front = new wpcuFPN_Front( $widget );
+					add_action( 'wp_print_styles',array($front,"loadThemeStyle"));
+					add_action('wp_head',array( $front, 'customCSS' ));
+					add_action( 'wp_print_scripts',array($front,"loadThemeScript")); 	
+			}
+			
+				/*
+				if (is_array($matche) && $matche[2] == 'frontpage_news') {
+					echo "<pre>";
+					print_r($matche);
+					echo "</pre>";				
+					preg_match('/widget="(.*?)"/s', $matche[3], $widgetID);
+					$widget = get_post( $widgetID[1] );
+					$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
+					$front = new wpcuFPN_Front( $widget );
+					//$front->loadThemeStyle();
+					add_action( 'wp_print_styles',array($front,"loadThemeStyle"));
+					add_action('wp_head',array( $front, 'customCSS' ));
+					add_action( 'wp_print_scripts',array($front,"loadThemeScript")); 					
+				}	*/
+			 
+			
+		}
+		return $posts;
 	}
 	
 	/**

@@ -9,7 +9,7 @@
 class wpcuFPN_Widget extends WP_Widget {
 	
 	const PRO_VERSION_URL = 'http://www.joomunited.com/wordpress-products/wp-latest-posts';
-	
+	protected static $did_script = false;
 	/**
 	 * Register widget with WordPress.
 	 * 
@@ -20,8 +20,30 @@ class wpcuFPN_Widget extends WP_Widget {
 			'WP Latest Posts Widget', // Name
 			array( 'description' => __( 'WP Latest Posts Widget instance', 'wpcufpn' ), ) // Args
 		);
+		add_action('init', array($this,"AddStyleScript"));
 	}
 	
+	public function AddStyleScript( $args ) {
+		global $wpcu_wpfn;
+		if( !class_exists(wpcuWPFnProPlugin) && ( $wpcu_wpfn->widget_count ++ > 0 ) ) {
+			return false;
+		}
+		$news_widget_id = $this->get_settings();
+			
+			foreach ($news_widget_id as $widgetfind) {
+				if(isset($widgetfind["news_widget_id"])){					
+					$widget = get_post( $widgetfind["news_widget_id"] );
+					$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
+					$front = new wpcuFPN_Front( $widget );
+					add_action( 'wp_print_styles',array($front,"loadThemeStyle"));
+					add_action('wp_head',array( $front, 'customCSS' ));
+					add_action( 'wp_print_scripts',array($front,"loadThemeScript")); 
+				}
+			}
+			
+		
+		
+	}
 	/**
 	 * Front-end display of widget.
 	 *
@@ -55,7 +77,7 @@ class wpcuFPN_Widget extends WP_Widget {
 		$widget = get_post( $instance['news_widget_id'] );
 		$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
 		$front = new wpcuFPN_Front( $widget );
-		$front->loadThemeStyle();	
+		//$front->loadThemeStyle();	
 		
 		if(
 			isset( $front->widget->settings['show_title'] ) &&

@@ -94,6 +94,8 @@ Once the plugin is installed, just create your first news block and insert it in
 
 
 == Revisions ==
+
+* 3.1.1 Best Way to enqueue style (header) and script (footer)
 * 3.1.0 Add multiple settings in animation block
 * 3.0.9 Add htmlentities in "alt" attribute
 * 3.0.8 Add 'Post content' or 'Excerpt content' settings in advanced tabs
@@ -110,6 +112,8 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Changelog ==
 
+= 3.1.1 : =
+* Best Way to enqueue style (header) and script (footer)
 = 3.1.0 : =
 * Add multiple settings in animation block
 = 3.0.9 : =

@@ -3,6 +3,9 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.1.1:
+* Best Way to enqueue style (header) and script (footer)
+
 Revision 3.1.0:
 * Add multiple settings in animation block
 

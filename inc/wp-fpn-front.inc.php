@@ -36,7 +36,7 @@ class wpcuFPN_Front {
 		$this->posts	 = $this->queryPosts();
 		
 		// Hook WP
-		add_action('wp_footer',array( $this, 'customCSS' ),20);
+		
 		$this->prepared  = true;
 		
 		//TODO: boxes setup will depend on theme template + pro filter
@@ -270,7 +270,7 @@ class wpcuFPN_Front {
 	 */
 	public function customCSS() {
 		$customCSS = $this->widget->settings['custom_css'];
-		echo '<style>'.$customCSS.'</style>';
+		echo '<style type="text/css">'.$customCSS.'</style>';
 	}
 	
 	/**
@@ -294,70 +294,16 @@ class wpcuFPN_Front {
 		return $this->html;
 	}
 	
+	
 	/**
 	 * This dynamically loads theme styles as inline html styles
 	 * 
 	 */
-	public function loadThemeStyle() {
-
+	public function loadThemeScript() {
 		$theme = $this->widget->settings['theme'];
 		$theme_dir = basename( $theme );
-		//$this->html.='<p>Theme: ' . $theme . '</p>';	//Debug
-		
-		//var_dump( $this->widget );					//Debug
-		
-		if( file_exists( $theme . '/style.css' ) ) {
-			
-			/*  @TODO : Not best way to add stylesheet on wordpress...
-			$this->html .= '<style>';
-			$url_prefix = plugins_url( '/themes/' . $theme_dir, dirname( __FILE__ ) ) . '/';
-			if( class_exists(wpcuWPFnProPlugin) ) {
-				$url_prefix = preg_replace( '/wp-latest-posts/', 'wp-frontpage-news-pro-addon', $url_prefix );
-			}
-			
-			$styles = @ file_get_contents( $theme . '/style.css' );
-			$styles = preg_replace( '/url\(/', 'url(' . $url_prefix, $styles );
-			$styles = preg_replace( '/wpcufpn_widget_ID/', 'wpcufpn_widget_' . $this->widget->ID, $styles );
-			$this->html .= $styles;
-			$this->html .= '</style>';
-			*/
-			
-			$color=$this->widget->settings["colorpicker"];
-			$color=$this->hex2rgba($this->widget->settings["colorpicker"],0.7);
-			$colorfull=$this->hex2rgba($this->widget->settings["colorpicker"],1);
-			
-			/*
-			 * Number of column
-			 */ 
-			$nbcol=$this->widget->settings["amount_cols"];
-			$theme_classDashicon = ' ' . basename( $this->widget->settings['theme'] );
-			
-			if($theme_classDashicon != " default")			
-				wp_enqueue_style( 'themes-wplp'.$this->widget->ID, plugins_url("wp-latest-posts-addon/themes/").$theme_dir."/style.css.php?id=".$this->widget->ID."&color=".$color."&colorfull=".$colorfull."&nbcol=".$nbcol);
-			
-			
-			
-			if ( $theme_classDashicon == " masonry-category" || $theme_classDashicon == " timeline"){
-				wp_enqueue_style( 'dashicons' );
-			}
-			
-					
-	
-		}
-		
 		if( file_exists( $theme . '/script.js' ) ) {
-			/*
-			 * @TODO : Again... Not best way to add script on wordpress...
-			 *  
-			 
-			$this->html .= '<script language="javascript" type="text/javascript">';
-			$script = @ file_get_contents( $theme . '/script.js' );
-			$script = preg_replace( '/wpcufpn_widget_ID/', 'wpcufpn_widget_' . $this->widget->ID, $script );
-			$this->html .= $script;
-			$this->html .= "wpfpn_nbrows = ( typeof wpfpn_nbrows != 'undefined' && wpfpn_nbrows instanceof Array ) ? wpfpn_nbrows : [];";
-			$this->html .= "wpfpn_nbrows[" . $this->widget->ID . "]=" . ($this->widget->settings['amount_rows']?$this->widget->settings['amount_rows']:0) . ';';
-			$this->html .= '</script>';
-			*/ 
+			
 			wp_enqueue_script( 'themes-wplp'.$this->widget->ID, plugins_url("wp-latest-posts-addon/themes/").$theme_dir
 			."/script.js.php?id="
 			.$this->widget->ID
@@ -380,18 +326,11 @@ class wpcuFPN_Front {
 			."&pauseaction="
 			.$this->widget->settings['autoanim_pause_action']
 			."&slidedirection="
-			.$this->widget->settings['autoanimation_slidedir']);
+			.$this->widget->settings['autoanimation_slidedir'],array('jquery'),'1.0', true);
 			
 			
 		} else {
-			/*$this->html .= '<script language="javascript" type="text/javascript">';
-			$this->html .= "wpfpn_nbrows = ( typeof wpfpn_nbrows != 'undefined' && wpfpn_nbrows instanceof Array ) ? wpfpn_nbrows : [];";
-			$this->html .= "wpfpn_nbrows[" . $this->widget->ID . "]=" . ($this->widget->settings['amount_rows']?$this->widget->settings['amount_rows']:0) . ';';
-			$this->html .= '</script>';
-			*/
-			
-			
-			
+		
 			wp_enqueue_script( 'scriptdefault-wplp'.$this->widget->ID, plugins_url("wp-latest-posts/js/")
 			."/wpcufpn_front.js.php?id="
 			.$this->widget->ID
@@ -413,13 +352,39 @@ class wpcuFPN_Front {
 			.$this->widget->settings['autoanim_pause_action']
 			."&slidedirection="
 			.$this->widget->settings['autoanimation_slidedir']
-			);
-			
-			
-			
+			,array('jquery'),'1.0', true);
 			
 			
 		}
+	}
+	/**
+	 * This dynamically loads theme styles as inline html styles
+	 * 
+	 */
+	public function loadThemeStyle() {
+
+		$theme = $this->widget->settings['theme'];
+		$theme_dir = basename( $theme );
+		
+		if( file_exists( $theme . '/style.css' ) ) {
+			
+			$color=$this->widget->settings["colorpicker"];
+			$color=$this->hex2rgba($this->widget->settings["colorpicker"],0.7);
+			$colorfull=$this->hex2rgba($this->widget->settings["colorpicker"],1);
+			$nbcol=$this->widget->settings["amount_cols"];
+			$theme_classDashicon = ' ' . basename( $this->widget->settings['theme'] );
+			
+			if($theme_classDashicon != " default")			
+				wp_enqueue_style( 'themes-wplp'.$this->widget->ID, plugins_url("wp-latest-posts-addon/themes/").$theme_dir."/style.css.php?id=".$this->widget->ID."&color=".$color."&colorfull=".$colorfull."&nbcol=".$nbcol);
+			
+			
+			
+			if ( $theme_classDashicon == " masonry-category" || $theme_classDashicon == " timeline"){
+				wp_enqueue_style( 'dashicons' );
+			}
+			
+		}
+		
 	}
 	
 	/**
