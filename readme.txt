@@ -2,7 +2,7 @@
 Contributors: JoomUnited
 Tags: latest post, widget, recent posts, posts, plugin, automatic, custom, previous posts, page, featured image, first image, featured posts
 Requires at least: 4.0
-Tested up to: 4.2.4
+Tested up to: 4.3
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -95,6 +95,7 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Revisions ==
 
+* 3.1.2 Fix Enqueue style and script (Fusion Page Builder compatibility)
 * 3.1.1 Best Way to enqueue style (header) and script (footer)
 * 3.1.0 Add multiple settings in animation block
 * 3.0.9 Add htmlentities in "alt" attribute
@@ -112,6 +113,8 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Changelog ==
 
+= 3.1.2 : = 
+* Fix Enqueue style and script (Fusion Page Builder compatibility)
 = 3.1.1 : =
 * Best Way to enqueue style (header) and script (footer)
 = 3.1.0 : =

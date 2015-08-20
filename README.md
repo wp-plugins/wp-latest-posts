@@ -3,6 +3,9 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.1.2:
+* Fix Enqueue style and script (Fusion Page Builder compatibility)
+
 Revision 3.1.1:
 * Best Way to enqueue style (header) and script (footer)
 

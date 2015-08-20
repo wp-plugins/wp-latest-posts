@@ -1533,21 +1533,65 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		if ( empty($posts) || is_admin() )
 			return $posts;
 		$pattern = get_shortcode_regex();
-		foreach ($posts as $post) {			
+		
+	
+		foreach ($posts as $post) {
 			preg_match_all('/'.$pattern.'/s', $post->post_content, $matches);
-			/*echo "<pre>";
-			print_r($matches);
-			echo "</pre>";*/
 			$widgetIDArray=array();
 			$trig=false;
+			
+			foreach ($matches as $matchtest){
+				if (is_array($matchtest)){
+					foreach ($matchtest as $matchtestsub){
+						preg_match_all('/widget="(.*?)"/s', $matchtestsub, $widgetIDarray);
+						foreach ($widgetIDarray as $widgetID) {
+								if (!empty($widgetID)){
+									if (is_array($widgetID)){
+										foreach ($widgetID as $widgetIDunique) {
+											if(is_numeric($widgetIDunique) && !in_array($widgetIDunique, $widgetIDArray, true)){
+												$widgetIDArray[]=$widgetIDunique;
+											}											
+										}
+									}else {
+										if(is_numeric($widgetIDunique) && !in_array($widgetIDunique, $widgetIDArray, true)){
+											$widgetIDArray[]=$widgetIDunique;
+										}	
+									}
+								}
+						}						
+					}
+				}
+				else {
+					preg_match_all('/widget="(.*?)"/s', $matchtestsub, $widgetIDarray);
+					foreach ($widgetIDarray as $widgetID) {
+								if (!empty($widgetID)){
+									if (is_array($widgetID)){
+										foreach ($widgetID as $widgetIDunique) {
+											if(is_numeric($widgetIDunique) && !in_array($widgetIDunique, $widgetIDArray, true)){
+												$widgetIDArray[]=$widgetIDunique;
+											}											
+										}
+									}else {
+										if(is_numeric($widgetIDunique) && !in_array($widgetIDunique, $widgetIDArray, true)){
+											$widgetIDArray[]=$widgetIDunique;
+										}	
+									}
+								}
+						}	
+				}
+				
+			}
+		
+			/*
 			foreach ($matches[2] as $matche => $matchkey) {
 				if ($matchkey == 'frontpage_news') {
 					$widgetIDArray[]=$matche;
 				}					
 			}
+			*/
+			
 			foreach ($widgetIDArray as $widgetIDitem) {
-					preg_match('/widget="(.*?)"/s', $matches[3][$widgetIDitem], $widgetID);
-					$widget = get_post( $widgetID[1] );
+					$widget = get_post( $widgetIDitem );
 					$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
 					$front = new wpcuFPN_Front( $widget );
 					add_action( 'wp_print_styles',array($front,"loadThemeStyle"));
