@@ -20,12 +20,15 @@ class wpcuFPN_Widget extends WP_Widget {
 			'WP Latest Posts Widget', // Name
 			array( 'description' => __( 'WP Latest Posts Widget instance', 'wpcufpn' ), ) // Args
 		);
-		add_action('init', array($this,"AddStyleScript"));
+		if (!is_admin()){
+			add_action('init', array($this,"AddStyleScript")); 
+		}
+		
 	}
 	
 	public function AddStyleScript( $args ) {
 		global $wpcu_wpfn;
-		if( !class_exists(wpcuWPFnProPlugin) && ( $wpcu_wpfn->widget_count ++ > 0 ) ) {
+		if( !class_exists("wpcuWPFnProPlugin") && ( $wpcu_wpfn->widget_count ++ > 0 ) ) {
 			return false;
 		}
 		$news_widget_id = $this->get_settings();
@@ -54,7 +57,7 @@ class wpcuFPN_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		global $wpcu_wpfn;
-		if( !class_exists(wpcuWPFnProPlugin) && ( $wpcu_wpfn->widget_count ++ > 0 ) ) {
+		if( !class_exists("wpcuWPFnProPlugin") && ( $wpcu_wpfn->widget_count ++ > 0 ) ) {
 			return false;
 		}
 		
@@ -99,7 +102,7 @@ class wpcuFPN_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) {
 		global $wpcu_wpfn;
-		if( !class_exists(wpcuWPFnProPlugin) && ( $wpcu_wpfn->widget_count ++ > 1 ) ) {
+		if( !class_exists("wpcuWPFnProPlugin") && ( $wpcu_wpfn->widget_count ++ > 1 ) ) {
 			echo __( 'This widget can be used only once with the free version of the WP Latest Posts plugin.' );
 			echo ' ';
 			echo __( 'If you need to configure multiple instances of the widget, please check-out' );

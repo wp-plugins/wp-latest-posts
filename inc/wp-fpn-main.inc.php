@@ -172,7 +172,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 				add_action( 'media_buttons', array( $this, 'editorButton' ), 1000 ); //1000 = put it at the end
 			}
 			
-			if( !class_exists(wpcuWPFnProPlugin) )
+			if( !class_exists('wpcuWPFnProPlugin') )
 				add_filter( 'plugin_row_meta', array( $this, 'addProLink' ), 10, 2 );
 			
 		} else {
@@ -735,6 +735,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			)
 		);
 		$tabs = apply_filters( 'wpcufpn_src_type', $tabs );
+		
+		
 		?>
 
 		<ul class="hidden">
@@ -746,7 +748,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		<ul class="horizontal">
 			<?php $idx=0; ?>
 			<?php foreach( $tabs as $tabhref => $tab ) : ?>
-			<li><input type="radio" name="wpcufpn_source_type" id="sct<?php echo ++$idx; ?>" value="<?php echo $tab['value']; ?>" class="source_type_sel" <?php echo $source_type_checked[$tab['value']]; ?> />
+			<li><input type="radio" name="wpcufpn_source_type" id="sct<?php echo ++$idx; ?>" value="<?php echo $tab['value']; ?>" class="source_type_sel" <?php echo (isset($source_type_checked[$tab['value']])?$source_type_checked[$tab['value']]:""); ?> />
 				<label for="sct<?php echo ++$idx; ?>" class="post_radio"><?php echo $tab['name']; ?></label></li>
 			<?php endforeach; ?>
 		</ul>
@@ -851,7 +853,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</div>';	//wpcu-inner-admin-block
 		// ---------------------------------------- //
 		
-		if( !class_exists(wpcuWPFnProPlugin) ) {
+		if( !class_exists('wpcuWPFnProPlugin') ) {
 			echo '<div class="wpcu-inner-admin-block wpcu yellowed"><p>' .
 				__(
 					'Additional advanced customization features<br/> and various beautiful ' .
@@ -926,7 +928,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			$classdisabled=" disabled";
 		}
 		
-		if( !class_exists(wpcuWPFnProPlugin) ) {
+		if( !class_exists('wpcuWPFnProPlugin') ) {
 			$classdisabled=" disabled";
 		} else {
 			$classdisabled="";
@@ -1042,7 +1044,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</div>';	//wpcu-inner-admin-block
 		// ---------------------------------------- //
 		
-		if( !class_exists(wpcuWPFnProPlugin) ) {
+		if( !class_exists('wpcuWPFnProPlugin') ) {
 			echo '<p class="wpcu pro_reminder"><div class="wpcu yellowed">' . 
 				__(
 					'Additional advanced customization features are available with the optional ' .
@@ -1071,8 +1073,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		echo '<li class="field"><label for="text_content" class="coltab">' . __( 'Text Content', 'wpcufpn' ) . '</label>' .
 		    '<select name="wpcufpn_text_content" id="text_content">' .
-			'<option value="0" ' . (($settings['text_content']=="0")?"selected":'')  . ' class="short-text">Full content</option>' .
-			'<option value="1" ' . (($settings['text_content']=="1")?"selected":'')  . ' class="short-text">Excerpt content</option>' .
+			'<option value="0" ' . ((isset($settings['text_content']) && $settings['text_content']=="0")?"selected":'')  . ' class="short-text">Full content</option>' .
+			'<option value="1" ' . ((isset($settings['text_content']) && $settings['text_content']=="1")?"selected":'')  . ' class="short-text">Excerpt content</option>' .
 			'</select> </li>'; 
 			 
 		
@@ -1080,7 +1082,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</ul>';	//fields
 		
 		
-		if( !class_exists(wpcuWPFnProPlugin) ) {
+		if( !class_exists('wpcuWPFnProPlugin') ) {
 			echo '<div class="wpcu yellowed halfed">';
 			echo '<p>' . __('Looking out for more <em>advanced</em> features?') . '</p>';
 			echo '<p>' . __('&rarr;&nbsp;Check out our optional <a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">"Pro" add-on</a>.') . '</p>';
@@ -1112,7 +1114,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		/** Support information **/
 		
-		if( !class_exists(wpcuWPFnProPlugin) ) {
+		if( !class_exists('wpcuWPFnProPlugin') ) {
 			echo '<div id="promote">';
 			echo '<h1>Get Pro version</h1>';
 			//echo '<p>Compatible with optional "<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">add-on</a>" version 2.0.6</p>';
@@ -1241,7 +1243,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		$cats = get_categories();
 		foreach( $cats as $cat ) {
 			echo '<li><input id="ccb_' . $cat->term_id . '" type="checkbox" name="wpcufpn_source_category[]" value="' .
-				$cat->term_id . '" ' . $source_cat_checked[$cat->term_id] . ' class="cat_cb" />';
+				$cat->term_id . '" ' . (isset($source_cat_checked[$cat->term_id])?$source_cat_checked[$cat->term_id]:"") . ' class="cat_cb" />';
 			echo '<label for="ccb_' . $cat->term_id . '" class="post_cb">' . $cat->name . '</label></li>';
 		}
 		echo '</ul>';
@@ -1264,7 +1266,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</select>';
 		echo '</li>';	//field
 		
-		if( !class_exists(wpcuWPFnProPlugin) ) {
+		if( !class_exists('wpcuWPFnProPlugin') ) {
 			echo '</ul><p class="wpcu pro_reminder"><div class="wpcu yellowed">' .
 				__(
 					'Additional content source options are available with the optional ' .
@@ -1301,7 +1303,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		
 		
-		if( !class_exists(wpcuWPFnProPlugin) ) {
+		if( !class_exists('wpcuWPFnProPlugin') ) {
 			echo '<li><input id="pages_all" type="checkbox" name="wpcufpn_source_pages[]" value="_all" checked="checked"  disabled="disabled" />' .
 				'<label for="pages_all" class="post_cb">All</li>';
 			echo '<li><p class="wpcu pro_reminder"><div class="wpcu yellowed">' .

@@ -308,7 +308,7 @@ class wpcuFPN_Front {
 			."/script.js.php?id="
 			.$this->widget->ID
 			."&nbrow="
-			.($this->widget->settings['amount_rows']?$this->widget->settings['amount_rows']:0)
+			.(isset($this->widget->settings['amount_rows'])?$this->widget->settings['amount_rows']:0)
 			."&pagination="
 			.$this->widget->settings['pagination']
 			."&autoanimate="
@@ -326,7 +326,7 @@ class wpcuFPN_Front {
 			."&pauseaction="
 			.$this->widget->settings['autoanim_pause_action']
 			."&slidedirection="
-			.$this->widget->settings['autoanimation_slidedir'],array('jquery'),'1.0', true);
+			.(isset($this->widget->settings['autoanimation_slidedir'])?$this->widget->settings['autoanimation_slidedir']:0),array('jquery'),'1.0', true);
 			
 			
 		} else {

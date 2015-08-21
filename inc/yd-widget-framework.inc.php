@@ -41,13 +41,15 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-define( 'REQUIRED_PHP_VER', '5.0.0' );
 
 /**
  *  This class will be defined just once for all upcoming YD plugins
  *  
  */
 if ( !class_exists( 'YD_Plugin' ) ) {
+	if (!defined('REQUIRED_PHP_VER')) {
+		define( 'REQUIRED_PHP_VER', '5.0.0' );
+	}
 	if( version_compare( PHP_VERSION, REQUIRED_PHP_VER ) >= 0 ) {
 	    class YD_Plugin {
 	    	
@@ -94,7 +96,7 @@ if ( !class_exists( 'YD_Plugin' ) ) {
 				$this->activation_notice= $p_arr['activation_notice'];
 				$this->backlinkware_text= $p_arr['backlinkware_text'];
 				$this->support_url 		= 'http://www.yann.com/en/wp-plugins/' . $this->sanitized_name;
-				$this->form_method		= $p_arr['form_method']?$p_arr['form_method']:'post';
+				$this->form_method		= isset($p_arr['form_method'])?$p_arr['form_method']:'post';
 				
 				register_activation_hook( $this->plugin_file, array( $this, 'activate' ) );
 				

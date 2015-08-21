@@ -95,6 +95,7 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Revisions ==
 
+* 3.1.3 Fix notice PHP message
 * 3.1.2 Fix Enqueue style and script (Fusion Page Builder compatibility)
 * 3.1.1 Best Way to enqueue style (header) and script (footer)
 * 3.1.0 Add multiple settings in animation block
@@ -113,6 +114,8 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Changelog ==
 
+= 3.1.3 : = 
+* Fix notice PHP message
 = 3.1.2 : = 
 * Fix Enqueue style and script (Fusion Page Builder compatibility)
 = 3.1.1 : =
