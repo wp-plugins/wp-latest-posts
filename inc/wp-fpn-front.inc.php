@@ -192,7 +192,7 @@ class wpcuFPN_Front {
 			}
 			
 			/** include specifics pages **/
-			if( 'src_page' == $this->widget->settings['source_type'] ) {
+			if( 'src_page' == $this->widget->settings['source_type'] && isset($this->widget->settings['source_pages']) ) {
 				if (!in_array("_all", $this->widget->settings['source_pages'])) {
 				   $args["post__in"]=$this->widget->settings['source_pages'];
 				}
@@ -259,6 +259,7 @@ class wpcuFPN_Front {
 		
 		wp_reset_postdata();
 		
+		$posts = (isset($posts)? $posts : '');
 		return
 			$this->posts = apply_filters( 'wpcufpn_front_queryposts', $posts, $this->widget );
 	}
@@ -308,50 +309,49 @@ class wpcuFPN_Front {
 			."/script.js.php?id="
 			.$this->widget->ID
 			."&nbrow="
-			.(isset($this->widget->settings['amount_rows'])?$this->widget->settings['amount_rows']:0)
+			    .(isset($this->widget->settings['amount_rows'])?$this->widget->settings['amount_rows']:0)
 			."&pagination="
-			.$this->widget->settings['pagination']
+                .(isset($this->widget->settings['pagination'])?$this->widget->settings['pagination']:0)
 			."&autoanimate="
-			.$this->widget->settings['autoanimation']
+                .(isset($this->widget->settings['autoanimation'])?$this->widget->settings['autoanimation']:0)
 			."&autoanimatetrans="
-			.$this->widget->settings['autoanimation_trans']
+                .(isset($this->widget->settings['autoanimation_trans'])?$this->widget->settings['autoanimation_trans']:0)
 			."&animationloop="
-			.$this->widget->settings['autoanim_loop']
+                .(isset($this->widget->settings['autoanim_loop'])?$this->widget->settings['autoanim_loop']:0)
 			."&slideshowspeed="
-			.$this->widget->settings['autoanim_slideshowspeed']
+                .(isset($this->widget->settings['autoanim_slideshowspeed'])?$this->widget->settings['autoanim_slideshowspeed']:0)
 			."&slidespeed="
-			.$this->widget->settings['autoanim_slidespeed']
+                .(isset($this->widget->settings['autoanim_slidespeed'])?$this->widget->settings['autoanim_slidespeed']:0)
 			."&pausehover="
-			.$this->widget->settings['autoanim_pause_hover']
+                .(isset($this->widget->settings['autoanim_pause_hover'])?$this->widget->settings['autoanim_pause_hover']:0)
 			."&pauseaction="
-			.$this->widget->settings['autoanim_pause_action']
+                .(isset($this->widget->settings['autoanim_pause_action'])?$this->widget->settings['autoanim_pause_action']:0)
 			."&slidedirection="
-			.(isset($this->widget->settings['autoanimation_slidedir'])?$this->widget->settings['autoanimation_slidedir']:0),array('jquery'),'1.0', true);
-			
-			
+			    .(isset($this->widget->settings['autoanimation_slidedir'])?$this->widget->settings['autoanimation_slidedir']:0),array('jquery'),'1.0', true);
+
 		} else {
 		
 			wp_enqueue_script( 'scriptdefault-wplp'.$this->widget->ID, plugins_url("wp-latest-posts/js/")
 			."/wpcufpn_front.js.php?id="
 			.$this->widget->ID
 			."&pagination="
-			.$this->widget->settings['pagination']
+                .(isset($this->widget->settings['pagination'])?$this->widget->settings['pagination']:0)
 			."&autoanimate="
-			.$this->widget->settings['autoanimation']
+                .(isset($this->widget->settings['autoanimation'])?$this->widget->settings['autoanimation']:0)
 			."&autoanimatetrans="
-			.$this->widget->settings['autoanimation_trans']
+                .(isset($this->widget->settings['autoanimation_trans'])?$this->widget->settings['autoanimation_trans']:0)
 			."&animationloop="
-			.$this->widget->settings['autoanim_loop']
+                .(isset($this->widget->settings['autoanim_loop'])?$this->widget->settings['autoanim_loop']:0)
 			."&slideshowspeed="
-			.$this->widget->settings['autoanim_slideshowspeed']
+                .(isset($this->widget->settings['autoanim_slideshowspeed'])?$this->widget->settings['autoanim_slideshowspeed']:0)
 			."&slidespeed="
-			.$this->widget->settings['autoanim_slidespeed']
+                .(isset($this->widget->settings['autoanim_slidespeed'])?$this->widget->settings['autoanim_slidespeed']:0)
 			."&pausehover="
-			.$this->widget->settings['autoanim_pause_hover']
+                .(isset($this->widget->settings['autoanim_pause_hover'])?$this->widget->settings['autoanim_pause_hover']:0)
 			."&pauseaction="
-			.$this->widget->settings['autoanim_pause_action']
+                .(isset($this->widget->settings['autoanim_pause_action'])?$this->widget->settings['autoanim_pause_action']:0)
 			."&slidedirection="
-			.$this->widget->settings['autoanimation_slidedir']
+                .(isset($this->widget->settings['autoanimation_slidedir'])?$this->widget->settings['autoanimation_slidedir']:0)
 			,array('jquery'),'1.0', true);
 			
 			
@@ -367,10 +367,10 @@ class wpcuFPN_Front {
 		$theme_dir = basename( $theme );
 		
 		if( file_exists( $theme . '/style.css' ) ) {
-			
-			$color=$this->widget->settings["colorpicker"];
-			$color=$this->hex2rgba($this->widget->settings["colorpicker"],0.7);
-			$colorfull=$this->hex2rgba($this->widget->settings["colorpicker"],1);
+
+            $color=(isset($this->widget->settings["colorpicker"])? $this->widget->settings["colorpicker"] : '');
+            $color=$this->hex2rgba((isset($this->widget->settings["colorpicker"])? $this->widget->settings["colorpicker"] : ''),0.7);
+            $colorfull=$this->hex2rgba((isset($this->widget->settings["colorpicker"])? $this->widget->settings["colorpicker"] : ''),1);
 			$nbcol=$this->widget->settings["amount_cols"];
 			$theme_classDashicon = ' ' . basename( $this->widget->settings['theme'] );
 			
@@ -393,7 +393,7 @@ class wpcuFPN_Front {
 	 * 
 	 */
 	private function container( $is_sidebar_widget=false ) {
-		
+
 		$style_cont = '';
 		$orientation = 'vertical';
 		
@@ -466,7 +466,7 @@ class wpcuFPN_Front {
 			$theme_classpro = " pro";
 			$timelineClass="timeline_".$this->widget->ID;
 		}
-		
+        $themeclass = "";
 		$themedefaut="";
 		if ($themeclass == ""){
 			$style_cont="";

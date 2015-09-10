@@ -34,13 +34,17 @@ class wpcuFPN_Widget extends WP_Widget {
 		$news_widget_id = $this->get_settings();
 			
 			foreach ($news_widget_id as $widgetfind) {
-				if(isset($widgetfind["news_widget_id"])){					
-					$widget = get_post( $widgetfind["news_widget_id"] );
-					$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
-					$front = new wpcuFPN_Front( $widget );
-					add_action( 'wp_print_styles',array($front,"loadThemeStyle"));
-					add_action('wp_head',array( $front, 'customCSS' ));
-					add_action( 'wp_print_scripts',array($front,"loadThemeScript")); 
+                if (isset($widgetfind["news_widget_id"]) && !empty($widgetfind["news_widget_id"]))
+                {
+                    $widget = get_post( $widgetfind["news_widget_id"] );
+                    if (isset($widget) && ! empty($widget)) {
+                        $widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
+                        $front = new wpcuFPN_Front( $widget );
+                        add_action( 'wp_print_styles',array($front,"loadThemeStyle"));
+                        add_action('wp_head',array( $front, 'customCSS' ));
+                        add_action( 'wp_print_scripts',array($front,"loadThemeScript"));
+                    }
+
 				}
 			}
 			
@@ -78,6 +82,7 @@ class wpcuFPN_Widget extends WP_Widget {
 		}
 		 * */	
 		$widget = get_post( $instance['news_widget_id'] );
+        if (isset($widget) && ! empty($widget)) {
 		$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
 		$front = new wpcuFPN_Front( $widget );
 		//$front->loadThemeStyle();	
@@ -91,6 +96,7 @@ class wpcuFPN_Widget extends WP_Widget {
 		$front->display( true, true );
 		
 		echo $args['after_widget'];
+        }
 	}
 	
 	/**
@@ -132,7 +138,7 @@ class wpcuFPN_Widget extends WP_Widget {
 		<label for="<?php echo $this->get_field_id( 'news_widget_id' ); ?>"><?php _e( 'News Widget:', 'wpcufpn' ); ?></label> 
 		<select id="<?php echo $this->get_field_id( 'news_widget_id' ); ?>" name="<?php echo $this->get_field_name( 'news_widget_id' ); ?>">
 		<?php foreach( $widgets as $widget ) : ?>		
-			<option value="<?php echo $widget->ID; ?>" <?php echo $selected[$widget->ID]; ?>><?php echo $widget->post_title; ?></option>
+			<option value="<?php echo $widget->ID; ?>" <?php echo (isset($selected[$widget->ID])?$selected[$widget->ID] : ''); ?>><?php echo $widget->post_title; ?></option>
 		<?php endforeach; ?>
 		</select>
 		</p>
