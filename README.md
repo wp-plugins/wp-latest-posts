@@ -3,6 +3,9 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.1.4:
+* Fix notice PHP message
+
 Revision 3.1.3:
 * Fix notice PHP message
 

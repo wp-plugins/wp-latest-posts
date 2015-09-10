@@ -312,7 +312,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	 */
 	public function saveCustomPostdata( $post_id ) {
 		
-		if ( self::CUSTOM_POST_NEWS_WIDGET_NAME != get_post_type( $post_id ) )
+        global $post;
+        if ( self::CUSTOM_POST_NEWS_WIDGET_NAME != get_post_type( $post_id ) )
 			return $post_id;
 		
 		if ( ! isset( $_POST[self::CUSTOM_POST_NONCE_NAME . '_nonce'] ) )
@@ -843,7 +844,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		/** Width units drop-down **/
 		echo '<select id="total_width_unit" name="wpcufpn_total_width_unit">';
 		foreach( $this->_width_unit_values as $value=>$text ) {
-			echo '<option value="' . $value . '" ' . $units_selected[$value] . '>' .
+			echo '<option value="' . (isset($value)?$value:'') . '" ' . (isset($units_selected[$value])?$units_selected[$value]:'') . '>' .
 				$text . '</option>';
 		}
 		echo '</select></li>';
@@ -884,7 +885,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		//var_dump( $all_themes );	//Debug
 		foreach( $all_themes as $dir=>$theme ) {
-			echo '<option value="' . $dir . '" ' . $theme_selected[$dir] . '>';
+			echo '<option value="' . $dir . '" ' . (isset($theme_selected[$dir])?$theme_selected[$dir]:'') . '>';
 			echo $theme['name'];
 			echo '</option>';	
 		}
@@ -907,7 +908,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			$screenshot_file = false;
 		}
 		//echo 'screenshot file: ' . $screenshot_file . '<br/>';	//Debug
-		if( $screenshot_file_path && file_exists( $screenshot_file_path ) ) {
+		if( isset($screenshot_file_path) && file_exists( $screenshot_file_path ) ) {
 			echo '<img alt="preview" src="' . $screenshot_file_url . 
 				'" style="width:100%;height:100%;" />';
 		}
@@ -1006,7 +1007,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<li class="field"><label for="thumb_img" class="coltab">' . __( 'Thumbnail image', 'wpcufpn' ) . '</label>' .
 			'<select id="thumb_img" name="wpcufpn_thumb_img">';
 		foreach( $this->_thumb_img_values as $value=>$text ) {
-			echo '<option value="' . $value . '" ' . $thumb_selected[$value] . '>';
+			echo '<option value="' . $value . '" ' . (isset($thumb_selected[$value])?$thumb_selected[$value]:'') . '>';
 			echo htmlspecialchars( __( $text, 'wpcufpn' ) );
 			echo '</option>';
 		}
@@ -1217,6 +1218,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	private function displayContentSourceCategoryTab() {
 		
 		global $post;
+        $source_cat_checked = array();
 		$checked = array();
 		$settings = get_post_meta( $post->ID, '_wpcufpn_settings', true );
 		if( empty( $settings ) )
@@ -1238,7 +1240,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		echo '<li class="field">';
 		echo '<ul>';
-		echo '<li><input id="cat_all" type="checkbox" name="source_category[]" value="_all" ' . $source_cat_checked['_all'] . ' />' .
+		echo '<li><input id="cat_all" type="checkbox" name="source_category[]" value="_all" ' . (isset($source_cat_checked['_all'])?$source_cat_checked['_all'] : '') . ' />' .
 			'<label for="cat_all" class="post_cb">All</li>';
 		$cats = get_categories();
 		foreach( $cats as $cat ) {
@@ -1252,8 +1254,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<li class="field">';
 		echo '<label for="cat_post_source_order" class="coltab">' . __( 'Order by', 'wpcufpn' ) . '</label>';
 		echo '<select name="wpcufpn_cat_post_source_order" id="cat_post_source_order" >';
-		echo '<option value="date" ' . $source_order_selected['date'] . '>' . __( 'By date', 'wpcufpn' ) . '</option>';
-		echo '<option value="title" ' . $source_order_selected['title'] . '>' . __( 'By title', 'wpcufpn' ) . '</option>';
+		echo '<option value="date" ' . (isset($source_order_selected['date'])?$source_order_selected['date']:"") . '>' . __( 'By date', 'wpcufpn' ) . '</option>';
+		echo '<option value="title" ' . (isset($source_order_selected['title'])?$source_order_selected['title']:"") . '>' . __( 'By title', 'wpcufpn' ) . '</option>';
 		//echo '<option value="order" ' . $source_order_selected['order'] . '>' . __( 'By order', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
@@ -1261,8 +1263,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<li class="field">';
 		echo '<label for="cat_post_source_asc" class="coltab">' . __( 'News sort order', 'wpcufpn' ) . '</label>';
 		echo '<select name="wpcufpn_cat_post_source_asc" id="cat_post_source_asc">';
-		echo '<option value="asc" ' . $source_asc_selected['asc'] . '>' . __( 'Ascending', 'wpcufpn' ) . '</option>';
-		echo '<option value="desc" ' . $source_asc_selected['desc'] . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
+		echo '<option value="asc" ' . (isset($source_asc_selected['asc'])?$source_asc_selected['asc']:"") . '>' . __( 'Ascending', 'wpcufpn' ) . '</option>';
+		echo '<option value="desc" ' . (isset($source_asc_selected['desc'])?$source_asc_selected['desc']:"") . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
 		
@@ -1322,17 +1324,17 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<li class="field">';
 		echo '<label for="pg_source_order" class="coltab">' . __( 'Order by', 'wpcufpn' ) . '</label>';
 		echo '<select name="wpcufpn_pg_source_order" id="pg_source_order" >';
-		echo '<option value="order" ' . $source_order_selected['order'] . '>' . __( 'By order', 'wpcufpn' ) . '</option>';
-		echo '<option value="title" ' . $source_order_selected['title'] . '>' . __( 'By title', 'wpcufpn' ) . '</option>';
-		echo '<option value="date" ' . $source_order_selected['date'] . '>' . __( 'By date', 'wpcufpn' ) . '</option>';
+		echo '<option value="order" ' . (isset($source_order_selected['order'])?$source_order_selected['order']:"") . '>' . __( 'By order', 'wpcufpn' ) . '</option>';
+		echo '<option value="title" ' . (isset($source_order_selected['title'])?$source_order_selected['title']:"") . '>' . __( 'By title', 'wpcufpn' ) . '</option>';
+		echo '<option value="date" ' . (isset($source_order_selected['date'])?$source_order_selected['date']:"") . '>' . __( 'By date', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
 		
 		echo '<li class="field">';
 		echo '<label for="pg_source_asc" class="coltab">' . __( 'Pages sort order', 'wpcufpn' ) . '</label>';
 		echo '<select name="wpcufpn_pg_source_asc" id="pg_source_asc">';
-		echo '<option value="asc" ' . $source_asc_selected['asc'] . '>' . __( 'Ascending', 'wpcufpn' ) . '</option>';
-		echo '<option value="desc" ' . $source_asc_selected['desc'] . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
+		echo '<option value="asc" ' . (isset($source_asc_selected['asc'])?$source_asc_selected['asc']:"") . '>' . __( 'Ascending', 'wpcufpn' ) . '</option>';
+		echo '<option value="desc" ' . (isset($source_asc_selected['desc'])?$source_asc_selected['desc']:"") . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
 		
@@ -1345,13 +1347,13 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	 * 
 	 */
 	function themeLister() {
-		$found_themes = array();
+        $found_themes = array();
 		$theme_root = dirname( dirname( __FILE__ ) ) . '/themes';
 		//echo 'theme dir: ' . $theme_root . '<br/>';	//Debug
 		
 		$dirs = @ scandir( $theme_root );
 		foreach ( $dirs as $k=>$v ) {
-			if( ! is_dir( $theme_root . '/' . $dir ) || $dir[0] == '.' || $dir == 'CVS' ) {
+			if( ! is_dir( $theme_root . '/' . $v ) || $v[0] == '.' || $v == 'CVS' ) {
 				unset( $dirs[$k] );
 			} else {
 				$dirs[$k] = array(
@@ -1535,17 +1537,17 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		if ( empty($posts) || is_admin() )
 			return $posts;
 		$pattern = get_shortcode_regex();
-		
+
 	
 		foreach ($posts as $post) {
 			preg_match_all('/'.$pattern.'/s', $post->post_content, $matches);
 			$widgetIDArray=array();
 			$trig=false;
-			
 			foreach ($matches as $matchtest){
 				if (is_array($matchtest)){
 					foreach ($matchtest as $matchtestsub){
 						preg_match_all('/widget="(.*?)"/s', $matchtestsub, $widgetIDarray);
+                        //print_r($widgetIDarray); die();
 						foreach ($widgetIDarray as $widgetID) {
 								if (!empty($widgetID)){
 									if (is_array($widgetID)){
@@ -1591,14 +1593,15 @@ class wpcuWPFnPlugin extends YD_Plugin {
 				}					
 			}
 			*/
-			
 			foreach ($widgetIDArray as $widgetIDitem) {
 					$widget = get_post( $widgetIDitem );
-					$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
-					$front = new wpcuFPN_Front( $widget );
-					add_action( 'wp_print_styles',array($front,"loadThemeStyle"));
-					add_action('wp_head',array( $front, 'customCSS' ));
-					add_action( 'wp_print_scripts',array($front,"loadThemeScript")); 	
+                    if ( isset($widget) && !empty($widget) ) {
+                        $widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
+                        $front = new wpcuFPN_Front( $widget );
+                        add_action( 'wp_print_styles',array($front,"loadThemeStyle"));
+                        add_action('wp_head',array( $front, 'customCSS' ));
+                        add_action( 'wp_print_scripts',array($front,"loadThemeScript"));
+                    }
 			}
 			
 				/*
@@ -1629,18 +1632,17 @@ class wpcuWPFnPlugin extends YD_Plugin {
 
 		$html = '';
 		
-		if( $widget_id = $args['widget'] ) {
+            $widget_id = $args['widget'];
 			$widget = get_post( $widget_id );
-			$widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
-			if( !empty( $widget->settings ) ) {
+			if( isset($widget) &&  ! empty( $widget ) ) {
+                $widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
 				$front = new wpcuFPN_Front( $widget );
 				$front->loadThemeStyle();
 				$html .= $front->display( false );
 			} else {
 				$html .= "\n<!-- WPFN: this News Widget is not initialized -->\n";
 			}
-		}
-		
+
 		return $html;
 	}
 	
