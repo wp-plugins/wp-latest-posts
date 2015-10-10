@@ -2,10 +2,24 @@
 /** WP Frontpage News front display class **/
 class wpcuFPN_Front {
 	
-	const CSS_DEBUG			= false;
-	const TITLE_EM_SIZE 	= 1.1;
-	const TEXT_EM_SIZE		= 1.1;
-	
+	const CSS_DEBUG			        = false;
+    /**
+     * config crop in here
+     * crop const
+     */
+	const DEFAULT_TITLE_EM_SIZE     = 1.24;
+	const TIMELINE_TITLE_EM_SIZE 	= 1.35;
+	const SMOOTH_TITLE_EM_SIZE 	    = 1.35;
+	const MASONRY_TITLE_EM_SIZE 	= 1.1;
+	const PORTFOLIO_TITLE_EM_SIZE 	= 1;
+
+
+	const DEFAULT_TEXT_EM_SIZE		= 1.4;
+	const TIMELINE_TEXT_EM_SIZE		= 1.5;
+	const SMOOTH_TEXT_EM_SIZE		= 1.25;
+	const MASONRY_TEXT_EM_SIZE		= 1.1;
+	const PORTFOLIO_TEXT_EM_SIZE	= 1.1;
+
 	public		$widget;
 	private	$html		= '';
 	private	$posts 		= array();
@@ -21,7 +35,10 @@ class wpcuFPN_Front {
 		$this->widget 	= $widget;
 		/*
 		 * If Premium Theme ! reset box
-		 */ 
+		 */
+
+        if (strpos($this->widget->settings["theme"],'portfolio'))
+            $this->resetsettingsPremium();
 
 		
 		if (strpos($this->widget->settings["theme"],'masonry'))
@@ -32,6 +49,19 @@ class wpcuFPN_Front {
 		
 		if (strpos($this->widget->settings["theme"],'timeline'))
 			$this->resetsettingsPremium();
+
+        /**
+         * check WPLP Block
+         */
+        if (strpos($this->widget->settings["theme"],'default'))
+        {
+            $this->setupDefaultlayout();
+        }
+
+        if (strpos($this->widget->settings["theme"],'oldDefault'))
+        {
+
+        }
 		
 		$this->posts	 = $this->queryPosts();
 		
@@ -43,30 +73,59 @@ class wpcuFPN_Front {
 		$this->boxes = array( 'top', 'left', 'right', 'bottom' );
 	}
 	
-	
+	private function setupDefaultlayout()
+    {
+        if ((isset($this->widget->settings['dfThumbnail'])) &&
+            (isset($this->widget->settings['dfTitle']))     &&
+            (isset($this->widget->settings['dfAuthor']))    &&
+            (isset($this->widget->settings['dfDate']))      &&
+            (isset($this->widget->settings['dfText']))      &&
+            (isset($this->widget->settings['dfReadMore']))) {
+
+            $this->widget->settings["box_top"] = array($this->widget->settings['dfThumbnail'], $this->widget->settings['dfTitle']);
+
+
+            $this->widget->settings["box_left"] = array();
+            $this->widget->settings["box_right"] = array();
+
+            $this->widget->settings["box_bottom"] = array(
+                $this->widget->settings['dfAuthor'],
+                $this->widget->settings['dfDate'],
+                $this->widget->settings['dfText'],
+                $this->widget->settings['dfReadMore'],
+            );
+        }
+
+    }
 	/**
 	 * Reset Box Settings
 	 * 
 	 */
 	private function resetsettingsPremium() {
-		
-		if (strpos($this->widget->settings["theme"],'masonry-category')) {
+
+        if (strpos($this->widget->settings["theme"],'masonry-category')) {
 			$this->widget->settings["box_top"]=array("ImageFull","Title");
-		}
+
+		} elseif (strpos($this->widget->settings["theme"],'portfolio')) {
+            $this->widget->settings["box_top"]=array("Thumbnail", "Title");
+        }
 		elseif (strpos($this->widget->settings["theme"],'smooth')) {
 			$this->widget->settings["box_top"]=array("Category","Date");
 		}
 		elseif (strpos($this->widget->settings["theme"],'timeline')) {
 			$this->widget->settings["box_top"]=array("ImageFull");
 		}
-		else {	
+		else {
 			$this->widget->settings["box_top"]=array("ImageFull","Title","Date","Text");
 		}
 		$this->widget->settings["box_left"]=null;
 		$this->widget->settings["box_right"]=null;
 		if (strpos($this->widget->settings["theme"],'masonry-category')) {
 			$this->widget->settings["box_bottom"]=array("Category");
-		}
+
+		} elseif (strpos($this->widget->settings["theme"],'portfolio')) {
+            $this->widget->settings["box_bottom"] = array("Category");
+        }
 		elseif (strpos($this->widget->settings["theme"],'smooth')) {		
 			$this->widget->settings["box_bottom"]=array("Title","Text","Read more");
 		}
@@ -173,7 +232,7 @@ class wpcuFPN_Front {
 			
 			if( 'src_custom_post_type' == $this->widget->settings['source_type']){
 				//$post_type = $this->widget->settings["custom_post_type"]; 			
-				if ($this->widget->settings['custom_post_taxonomy']) {
+				if (isset($this->widget->settings['custom_post_taxonomy'])) {
 					$args["tax_query"]=array(array(
 						'taxonomy' => $this->widget->settings['custom_post_taxonomy'],
 						'field'    => 'term_id'						
@@ -226,31 +285,31 @@ class wpcuFPN_Front {
 			if( $this->widget->settings['max_elts'] > 0 )
 				$limit = $this->widget->settings['max_elts'];
 			
-			
-			foreach( $this->widget->settings['source_tags'] as $tag ) {
-				if ($tag=="_all"){
-					$tags = get_tags();		
-					foreach ($tags as $tag)
-						$source_tag[] = $tag->term_id;
-					
-				}else {
-					$source_tag[] = $tag;
-				}
-				
-				
-			}
-			
+			if (isset($this->widget->settings['source_tags']) && !empty($this->widget->settings['source_tags'])) {
+                foreach ($this->widget->settings['source_tags'] as $tag) {
+                    if ($tag == "_all") {
+                        $tags = get_tags();
+                        foreach ($tags as $tag)
+                            $source_tag[] = $tag->term_id;
+
+                    } else {
+                        $source_tag[] = $tag;
+                    }
+
+
+                }
+            }
 			
 			
 			$args = array( 
 						'post_type'			=> $post_type,
 						'orderby'			=> $order_by,
-						'order' 			=> $order,
+						'order' 			=> isset($order)?$order:'',
 						'posts_per_page' 	=> $limit,
 						'tax_query' => array(array(
 							'taxonomy' => 'post_tag',
 							'field' => 'term_id',
-							'terms' => $source_tag
+							'terms' => isset($source_tag)?$source_tag:''
 						))
 				);
 				
@@ -368,16 +427,22 @@ class wpcuFPN_Front {
 		
 		if( file_exists( $theme . '/style.css' ) ) {
 
+            $colorTheme = (isset($this->widget->settings["defaultColor"])? $this->widget->settings["defaultColor"] : '');
             $color=(isset($this->widget->settings["colorpicker"])? $this->widget->settings["colorpicker"] : '');
             $color=$this->hex2rgba((isset($this->widget->settings["colorpicker"])? $this->widget->settings["colorpicker"] : ''),0.7);
             $colorfull=$this->hex2rgba((isset($this->widget->settings["colorpicker"])? $this->widget->settings["colorpicker"] : ''),1);
 			$nbcol=$this->widget->settings["amount_cols"];
 			$theme_classDashicon = ' ' . basename( $this->widget->settings['theme'] );
-			
-			if($theme_classDashicon != " default")			
-				wp_enqueue_style( 'themes-wplp'.$this->widget->ID, plugins_url("wp-latest-posts-addon/themes/").$theme_dir."/style.css.php?id=".$this->widget->ID."&color=".$color."&colorfull=".$colorfull."&nbcol=".$nbcol);
-			
-			
+
+            if(($theme_classDashicon != " default")  && ($theme_classDashicon != " oldDefault"))
+            {
+                wp_enqueue_style( 'themes-wplp'.$this->widget->ID, plugins_url("wp-latest-posts-addon/themes/").$theme_dir."/style.css.php?id=".$this->widget->ID."&color=".$color."&colorfull=".$colorfull."&nbcol=".$nbcol."&defaultColorTheme=".$colorTheme);
+            }
+
+//            if ($theme_classDashicon == " oldDefault")
+//            {
+//
+//            }
 			
 			if ( $theme_classDashicon == " masonry-category" || $theme_classDashicon == " timeline"){
 				wp_enqueue_style( 'dashicons' );
@@ -442,13 +507,27 @@ class wpcuFPN_Front {
 		}
 		
 		$theme_class = ' ' . basename( $this->widget->settings['theme'] );
+
+        if ($theme_class == " oldDefault")
+        {
+            $theme_class = " default";
+        }
 		
 		$theme_classpro="";
 		$masonry_class="";
 		$smooth_class="";
 		$slideClass='';
 		$timelineClass='';
-	
+        $portfolio_Class = "";
+
+        /**
+         * theme $portfolioClass
+         */
+        if ($theme_class == " portfolio"){
+            $theme_classpro = " pro";
+            $portfolio_Class = "portfolioContainer_".$this->widget->ID;
+        }
+
 		if ($theme_class == " masonry" || $theme_class == " masonry-category"){
 		   $theme_classpro = " pro";
 		   $masonry_class = "masonrycontainer_".$this->widget->ID;
@@ -472,14 +551,12 @@ class wpcuFPN_Front {
 			$style_cont="";
 			$themedefaut=" defaultflexslide";			
 		}
-		
-		
 			
 		$amount_cols_class = ' cols' . $this->widget->settings['amount_cols'];
 		
 		/** Container div **/
 		$this->html .= '<div id="wpcufpn_widget_' . $this->widget->ID . '" class="wpcufpn_container ' . $orientation . $themedefaut . $theme_class . $theme_classpro . $amount_cols_class . '" style="' . $style_cont . '">';
-		$this->html .= '<ul class="wpcufpn_listposts'.$slideClass.$themedefaut.'" id="'.$masonry_class.$smooth_class.$timelineClass.'" style="' . $style_slide . '" >';
+		$this->html .= '<ul class="wpcufpn_listposts'.$slideClass.$themedefaut.'" id="'.$portfolio_Class.$masonry_class.$smooth_class.$timelineClass.'" style="' . $style_slide . '" >';
 		$this->loop($theme_class);
 		$this->html .= '</ul>';
 		$this->html .= '</div>';
@@ -571,7 +648,11 @@ class wpcuFPN_Front {
 		 * 
 		 */ 
 		
-		if ($themeclass == " masonry" || $themeclass ==' masonry-category' || $themeclass ==' smooth-effect' || $themeclass == " timeline")
+		if ($themeclass == " masonry"           ||
+            $themeclass ==' masonry-category'   ||
+            $themeclass ==' smooth-effect'      ||
+            $themeclass == " timeline"          ||
+            $themeclass == " portfolio")
 		$style="";	
 		
 		
@@ -725,7 +806,6 @@ class wpcuFPN_Front {
 		$fields = $this->widget->settings['box_' . $box_name];
 		//if( !$fields )
 		//	return;
-		
 		if( is_array( $fields ) ) {
 			foreach( $fields as $field ) {
 				if( $inner = $this->field( $field ) ) {
@@ -751,10 +831,42 @@ class wpcuFPN_Front {
 	 */
 	private function field( $field ) {
 		global $post;
-		
-		
+        $cropTextSize   = "";
+        $cropTitleSize  = "";
+
+        if (strpos($this->widget->settings["theme"],'portfolio'))
+        {
+            $cropTextSize  = self::PORTFOLIO_TEXT_EM_SIZE;
+            $cropTitleSize = self::PORTFOLIO_TITLE_EM_SIZE;
+        }
+
+        elseif (strpos($this->widget->settings["theme"],'masonry'))
+        {
+            $cropTextSize  = self::MASONRY_TEXT_EM_SIZE;
+            $cropTitleSize = self::MASONRY_TITLE_EM_SIZE;
+        }
+
+        elseif (strpos($this->widget->settings["theme"],'smooth'))
+        {
+            $cropTextSize  = self::SMOOTH_TEXT_EM_SIZE;
+            $cropTitleSize = self::SMOOTH_TITLE_EM_SIZE;
+        }
+
+        elseif (strpos($this->widget->settings["theme"],'timeline'))
+        {
+            $cropTextSize  = self::TIMELINE_TEXT_EM_SIZE;
+            $cropTitleSize = self::TIMELINE_TITLE_EM_SIZE;
+        }
+        else
+        {
+            $cropTextSize  = self::DEFAULT_TEXT_EM_SIZE;
+            $cropTitleSize = self::DEFAULT_TITLE_EM_SIZE;
+        }
+
 		/** Title field **/
 		if( 'Title' == $field ) {
+
+
 			$before = $after = '';
 			
 			$title = $post->post_title;
@@ -768,7 +880,7 @@ class wpcuFPN_Front {
 				$title = mb_substr($title, 0, $this->widget->settings['crop_title_len']);
 			}
 			if( $this->widget->settings['crop_title'] == 2 ) {	// line limitting
-				$style = 'height:' . ( $this->widget->settings['crop_title_len'] * self::TITLE_EM_SIZE ) . 'em';
+				$style = 'height:' . ( $this->widget->settings['crop_title_len'] * $cropTitleSize ) . 'em';
 				if( 1 == $this->widget->settings['crop_title_len'] ) {
 					$before = '<span style="' . $style . '" class="line_limit">';
 				} else {
@@ -776,12 +888,12 @@ class wpcuFPN_Front {
 				}
 				$after = '</span>';
 			}
-			
-			if( $this->widget->settings['crop_title'] == 2 && 1 == $this->widget->settings['crop_title_len'] ) {
-				$before = '<span style="' . $style . '" class="line_limit">';
-			} else {
-				$before = '<span style="' . $style . '" class="line_limit nowrap">';
-			}
+//
+//			if( $this->widget->settings['crop_title'] == 2 && 1 == $this->widget->settings['crop_title_len'] ) {
+//				$before = '<span style="' . $style . '" class="line_limit">';
+//			} else {
+//				$before = '<span style="' . $style . '" class="line_limit nowrap">';
+//			}
 			
 			$after = '</span>';
 			
@@ -817,7 +929,7 @@ class wpcuFPN_Front {
 				$text.= "...";
 			}
 			if( $this->widget->settings['crop_text'] == 2 ) { 	// line limitting
-				$before = '<span style="max-height:' . ($this->widget->settings['crop_text_len'] * self::TEXT_EM_SIZE ) . 'em" class="line_limit">';
+				$before = '<span style="max-height:' . ($this->widget->settings['crop_text_len'] * $cropTextSize ) . 'em" class="line_limit">';
 				$after = '</span>';
 				$text.= "...";
 			}
@@ -850,10 +962,8 @@ class wpcuFPN_Front {
 				}
 			       
 			}
-				
-			//var_dump(get_the_post_thumbnail($post->ID));
-			
-			if (!$imgsrc[0])
+
+			if (!isset($imgsrc[0]))
 					$imgsrc[0]=$this->widget->settings['default_img'];
 			
 			
@@ -869,25 +979,55 @@ class wpcuFPN_Front {
 		if( 'First image' == $field || 'Thumbnail' == $field ) {
 			$sizing = null;
 			$style = '';
-			if( $this->widget->settings['thumb_width'] > 0 && $this->widget->settings['thumb_height'] > 0 ) {
-				$sizing = array(
-						$this->widget->settings['thumb_width'],
-						$this->widget->settings['thumb_height']
-				);
-				$style .= 'width:' . $this->widget->settings['thumb_width'] . 'px;';
-				
+//			if( $this->widget->settings['thumb_width'] > 0 && $this->widget->settings['thumb_height'] > 0 ) {
+
+//				$style .= 'width:' . $this->widget->settings['thumb_width'] . 'px;';
 				/** Only enforce image height if cropping is off **/
 				if( isset($this->widget->settings['crop_img']) && $this->widget->settings['crop_img'] == 0 ) {
-					$style .= 'height:' . $this->widget->settings['thumb_height'] . 'px;';
-				} else {
-					$style .= 'position: absolute;';
+//                    if ( ! strpos($this->widget->settings["theme"],'portfolio'))
+//                    {
+//                           $style .= 'height:' . $this->widget->settings['thumb_height'] . 'px;';
+//                    }
+                    $imageSize = "";
+                    if (isset($this->widget->settings['image_size']) && !empty($this->widget->settings['image_size']))
+                    {
+                        $imageSize = $this->widget->settings['image_size'];
+                    }
+                    $fetchImageSize = null;
+
+                    switch($imageSize) {
+                        case 'thumbnailSize':
+                            $fetchImageSize = 'thumbnail';
+                            break;
+
+                        case 'mediumSize':
+                            $fetchImageSize = 'medium';
+                            break;
+
+                        case 'largeSize':
+                            $fetchImageSize = 'large';
+                            break;
+                    }
+
+				}
+                /**
+                 * cropping mode
+                 */
+                elseif (isset($this->widget->settings['crop_img']) && $this->widget->settings['crop_img'] == 1)
+                {
+                    $sizing = array(
+                        $this->widget->settings['thumb_width'],
+                        $this->widget->settings['thumb_height']
+                    );
+
+                    $style .= 'position: absolute;';
 					$style .= 'top: 50%;';
 					//$style .= 'left: 50%;';
 					$style .= 'margin-top: ' . ( 0 - ( $this->widget->settings['thumb_width'] / 2 ) ) . 'px;';
 					//$style .= 'margin-left: ' . $this->widget->settings['width']/2 . ';';
 				}
-			}
-			
+//			}
+
 			/** Find image **/
 			if( 'First image' == $field || (isset($this->widget->settings['thumb_img'])&&$this->widget->settings['thumb_img']==2) ) {
 				/** Use first attachment of post **/
@@ -899,34 +1039,101 @@ class wpcuFPN_Front {
 				}
 
 			} elseif (isset($this->widget->settings['thumb_img'])&&$this->widget->settings['thumb_img']==1) {
-				/** Use first image of post **/
-				global $post;
-				if (preg_match('/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', $post->post_content, $matches))
-					$src = $matches[1];
-				
-			} else {
+                /** Use first image of post **/
+
+                $imageSize = "";
+                /**
+                 * get Image Size from setting
+                 */
+                if (isset($this->widget->settings['image_size']) && !empty($this->widget->settings['image_size'])) {
+                    $imageSize = $this->widget->settings['image_size'];
+                }
+                $fetchImageSize = null;
+
+                switch ($imageSize) {
+                    case 'thumbnailSize':
+                        $fetchImageSize = 'thumbnail';
+                        break;
+
+                    case 'mediumSize':
+                        $fetchImageSize = 'medium';
+                        break;
+
+                    case 'largeSize':
+                        $fetchImageSize = 'large';
+                        break;
+                }
+
+                global $post;
+                /**
+                 * get post content
+                 */
+                if (preg_match('/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', $post->post_content, $matches)) {
+
+                    $imageTag = $matches[0];
+                }
+
+                $class = "";
+                $src = "";
+                /**
+                 * get src Image
+                 */
+                if (!empty($imageTag)) {
+
+                    $xmlDoc = new DOMDocument();
+                    @$xmlDoc->loadHTML($imageTag);
+                    $tags = $xmlDoc->getElementsByTagName('img');
+                    foreach ($tags as $order => $tag) {
+                        $class = $tag->getAttribute('class');
+                    }
+
+                    preg_match('/\d+/', $class, $matches);
+                    $firstImageId = $matches;
+                    if (!empty($firstImageId))
+                    {
+                        $firstImageId = implode(" ",$firstImageId);
+                        $srca = wp_get_attachment_image_src(intval($firstImageId), $fetchImageSize);
+                        $src = $srca[0];
+                    }
+                }
+
+            } else {
 				/** Use default WP thumbnail **/
-				$srca = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), $sizing );
+                if (strpos($this->widget->settings["theme"],'portfolio'))
+                {
+                    $srca = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), "full");
+
+                } else {
+                    if (isset($sizing) && !empty($sizing))
+                    {
+                        $srca = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), $sizing );
+
+                    } elseif(isset($fetchImageSize) && !empty($fetchImageSize)) {
+                        $srca = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), $fetchImageSize );
+                    }
+                }
 				$src = $srca[0];
-				
 			}
 			/* DEBUG
 			echo 'img_src: ' . $this->widget->settings['thumb_img'] . '<br/>';
 			echo 'post_id: ' . get_the_ID() . '<br/>';
 			echo 'src: ' . $src . '<br/><br/>';
 			*/
-			
+
 			/** If no thumb or first image get default image **/
 			if( isset($src) && $src ) {
 				$img = '<img src="' . $src . '" style="' . $style . '" alt="' . get_the_title() . '" class="wpcufpn_thumb" />';
+
 			} else {
 				if( isset($this->widget->settings['default_img']) && $this->widget->settings['default_img'] ) {
-					$img = '<img src="' . $this->widget->settings['default_img'] . '" style="' . $style . '" alt="' . get_the_title() . '"  class="wpcufpn_default" />';
+                    $srcDefaultImage = $this->widget->settings['default_img'];
+
+                    $img = '<img src="' . $srcDefaultImage . '" style="' . $style . '" alt="' . get_the_title() . '"  class="wpcufpn_default" />';
 				} else {
 					$img = '<span class="img_placeholder" style="' . $style . '" class="wpcufpn_placeholder"></span>';
 				}
 			}
-			
+
 			/** Image cropping & margin **/
 			$style = '';
 			if( isset($this->widget->settings['crop_img']) && $this->widget->settings['crop_img'] == 1 ) {
@@ -935,6 +1142,39 @@ class wpcuFPN_Front {
 				$style .= 'height:' . $this->widget->settings['thumb_height'] . 'px;';
 			} else {
 				//$style .= 'width:100%;';
+                if (strpos($this->widget->settings["theme"],'portfolio'))
+                {
+
+                    $style .= 'height:'.$this->widget->settings['thumb_height']. 'px;';
+                } elseif(strpos($this->widget->settings["theme"],"default")) {
+                    $imageSize = "";
+                    if (isset($this->widget->settings['image_size']) && !empty($this->widget->settings['image_size']))
+                    {
+                        $imageSize = $this->widget->settings['image_size'];
+                    }
+                    $fetchImageSize = null;
+
+                    switch($imageSize) {
+                        case 'thumbnailSize':
+                            $fetchImageSize = 'thumbnail';
+                            break;
+
+                        case 'mediumSize':
+                            $fetchImageSize = 'medium';
+                            break;
+
+                        case 'largeSize':
+                            $fetchImageSize = 'large';
+                            break;
+                    }
+
+                    if (($fetchImageSize == "medium") || ($fetchImageSize == "large"))
+                    {
+                        $style .= 'height:'.$this->widget->settings['thumb_height']. 'px;';
+
+                    }
+
+                }
 			}
 			
 			if( isset($this->widget->settings['margin_top']) && $this->widget->settings['margin_top'] > 0 )
@@ -948,7 +1188,7 @@ class wpcuFPN_Front {
 			
 			$style .= 'max-width:100%;';
 			
-			$before = '<span class="img_cropper" style="' . $style . '">';
+			$before = '<span class="img_cropper" style="' .$style . '">';
 			$after = '</span>';
 						
 			return $before . $img . $after;
@@ -967,14 +1207,12 @@ class wpcuFPN_Front {
 			
 			if ('src_custom_post_type' == $this->widget->settings['source_type']){
 				//$cats= get_the_taxonomies($this->widget->settings['custom_post_taxonomy']);
-				//var_dump($this->widget->settings['custom_post_term']);
-				//var_dump($this->widget->settings['custom_post_taxonomy']);
 				
 				$argstax=array();
 				
-				 $cats = wp_get_post_terms(get_the_ID(), $this->widget->settings['custom_post_taxonomy'],$argstax); 				 
+				 $cats = wp_get_post_terms(get_the_ID(), (isset($this->widget->settings['custom_post_taxonomy'])?$this->widget->settings['custom_post_taxonomy']:''),$argstax);
 				 
-				if ($this->widget->settings['custom_post_term']) {
+				if (isset($this->widget->settings['custom_post_term'])) {
 					$cats = array(get_term_by( "id", $this->widget->settings['custom_post_term'], $this->widget->settings['custom_post_taxonomy'])); 
 				}
 				
@@ -1015,7 +1253,7 @@ class wpcuFPN_Front {
 
 		/** Date field **/
 		if( 'Date' == $field ) {
-			if( isset($this->widget->settings['date_fmt']) && $this->widget->settings['date_fmt'] ) {
+			if( isset($this->widget->settings['date_fmt']) &&  $this->widget->settings['date_fmt'] ) {
 				return get_the_date($this->widget->settings['date_fmt']);
 			} else {
 				return get_the_date();
@@ -1101,7 +1339,7 @@ class wpcuFPN_Front {
 	        //Return rgb(a) color string
 	        return $output;
 	}
-		
+
 	/*Unused...
 	/**
 	 * Default template for the top box
