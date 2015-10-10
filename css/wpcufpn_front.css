@@ -76,12 +76,14 @@
 
 .wpcufpn_container.default .author {
 	font-size: 0.9em;
-	line-height: 0.9em;
+	line-height: 1.23;
+    display: block;
 }
 
 .wpcufpn_container.default .title {
 	font-size: 0.9em;
-	line-height: 0.9em;
+	line-height: 1.23;
+    display: block;
 }
 
 .wpcufpn_container .title {
@@ -109,8 +111,8 @@
 
 .wpcufpn_container.default .text,
 .wpcufpn_container.default .date {
-	font-size: 0.9em;
-	line-height: 1em;
+	font-size: 0.8em;
+	line-height: 1.4;
 	padding-bottom: 3px;
 }
 
@@ -119,7 +121,7 @@
 	overflow: hidden;
 	display: block;
 	text-align: left;
-	line-height: 1.1em;
+	line-height: 1.23;
 	font-size: 1.1em;
 	font-weight: normal;
 	text-overflow: ellipsis;
@@ -140,6 +142,7 @@
 	color: #888;
 	font-size: 0.9em;
 	text-align: right;
+    padding-right: 5px;
 }
 
 span.img_cropper {
@@ -556,5 +559,5 @@ html[xmlns] .defaultflexslide {
 	.flex-direction-nav .flex-next {
 		opacity: 1;
 		right: 10px;
-	};
+	}
 }

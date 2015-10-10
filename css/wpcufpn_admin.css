@@ -86,7 +86,6 @@ div.wpcufpn-theme-preview {
 div.arrow_col_wrapper {
 	overflow: hidden;
 	display: inline-block;
-	border: 1px dotted #a7a7a7;
 }
 ul.arrow_col {
 	display: inline-block;
@@ -298,6 +297,7 @@ span.radioset label{
  * Disabled Option Pro theme
  * 
  */
+#wpcufpn_config_zone_new.disabled,
 #wpcufpn_config_zone.disabled,
 #wpcufpn_config_animation.disabled ,
 #wpcufpn_config_color.disabled,

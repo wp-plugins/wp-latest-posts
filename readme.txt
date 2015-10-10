@@ -3,7 +3,7 @@ Contributors: JoomUnited
 Tags: latest post, news widget, recent posts, posts, recent post widget, news posts, latest page, custom content, previous posts, page, featured posts
 Requires at least: 4.0
 Tested up to: 4.3.1
-Stable tag: 3.2.1
+Stable tag: 3.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,7 +32,7 @@ The main idea of this plugin is to visually take the latest or custom content li
 = Basic Features (available in this free, open-source version) =
       
 * Unlimited Latest posts instances
-* Customizable blank theme
+* Customizable elements to load: image, title, text, author, date, read more
 * Insert news blocks in the content editor with a button
 * Display as a sidebar widget
 * Select number of columns and pages in a news block
@@ -68,11 +68,20 @@ The main idea of this plugin is to visually take the latest or custom content li
 * Custom "read more" text
 * Default vector images
 
+Main plugins from JoomUnited:
+WP Media Folder: https://www.joomunited.com/wordpress-products/wp-media-folder
+WP File Download: https://www.joomunited.com/wordpress-products/wp-table-manager
+WP Table Manager: https://www.joomunited.com/wordpress-products/wp-file-download
+WP Meta SEO: https://www.joomunited.com/wordpress-products/wp-meta-seo
+WP Latest Posts: https://www.joomunited.com/wordpress-products/wp-latest-posts
+
 = Support =      
 
 Detailed documentation, information and **support can be found here on the [JoomUnited website](http://www.joomunited.com/wordpress-products/wp-latest-posts)** 
 
 A dedicated private ticket support is also available on the website.
+
+
 
 == Installation ==
 
@@ -94,6 +103,7 @@ Once the plugin is installed, just create your first news block and insert it in
 
 
 == Revisions ==
+* 3.3.0 New default theme
 * 3.2.0 Generate a PHP code in order to insert a news bloc in page template file
 * 3.1.2 Fix Enqueue style and script (Fusion Page Builder compatibility)
 * 3.1.1 Best Way to enqueue style (header) and script (footer)
@@ -112,6 +122,8 @@ Once the plugin is installed, just create your first news block and insert it in
  
 
 == Changelog ==
+= 3.3.0 : = 
+* New default theme
 = 3.2.0 : = 
 * Generate a PHP code in order to insert a news bloc in page template file
 = 3.1.4 : = 

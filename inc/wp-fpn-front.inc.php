@@ -7,14 +7,14 @@ class wpcuFPN_Front {
      * config crop in here
      * crop const
      */
-	const DEFAULT_TITLE_EM_SIZE     = 0.9;
+	const DEFAULT_TITLE_EM_SIZE     = 1.24;
 	const TIMELINE_TITLE_EM_SIZE 	= 1.35;
 	const SMOOTH_TITLE_EM_SIZE 	    = 1.35;
 	const MASONRY_TITLE_EM_SIZE 	= 1.1;
 	const PORTFOLIO_TITLE_EM_SIZE 	= 1;
 
 
-	const DEFAULT_TEXT_EM_SIZE		= 0.9;
+	const DEFAULT_TEXT_EM_SIZE		= 1.4;
 	const TIMELINE_TEXT_EM_SIZE		= 1.5;
 	const SMOOTH_TEXT_EM_SIZE		= 1.25;
 	const MASONRY_TEXT_EM_SIZE		= 1.1;
@@ -49,6 +49,19 @@ class wpcuFPN_Front {
 		
 		if (strpos($this->widget->settings["theme"],'timeline'))
 			$this->resetsettingsPremium();
+
+        /**
+         * check WPLP Block
+         */
+        if (strpos($this->widget->settings["theme"],'default'))
+        {
+            $this->setupDefaultlayout();
+        }
+
+        if (strpos($this->widget->settings["theme"],'oldDefault'))
+        {
+
+        }
 		
 		$this->posts	 = $this->queryPosts();
 		
@@ -60,14 +73,37 @@ class wpcuFPN_Front {
 		$this->boxes = array( 'top', 'left', 'right', 'bottom' );
 	}
 	
-	
+	private function setupDefaultlayout()
+    {
+        if ((isset($this->widget->settings['dfThumbnail'])) &&
+            (isset($this->widget->settings['dfTitle']))     &&
+            (isset($this->widget->settings['dfAuthor']))    &&
+            (isset($this->widget->settings['dfDate']))      &&
+            (isset($this->widget->settings['dfText']))      &&
+            (isset($this->widget->settings['dfReadMore']))) {
+
+            $this->widget->settings["box_top"] = array($this->widget->settings['dfThumbnail'], $this->widget->settings['dfTitle']);
+
+
+            $this->widget->settings["box_left"] = array();
+            $this->widget->settings["box_right"] = array();
+
+            $this->widget->settings["box_bottom"] = array(
+                $this->widget->settings['dfAuthor'],
+                $this->widget->settings['dfDate'],
+                $this->widget->settings['dfText'],
+                $this->widget->settings['dfReadMore'],
+            );
+        }
+
+    }
 	/**
 	 * Reset Box Settings
 	 * 
 	 */
 	private function resetsettingsPremium() {
-		
-		if (strpos($this->widget->settings["theme"],'masonry-category')) {
+
+        if (strpos($this->widget->settings["theme"],'masonry-category')) {
 			$this->widget->settings["box_top"]=array("ImageFull","Title");
 
 		} elseif (strpos($this->widget->settings["theme"],'portfolio')) {
@@ -79,7 +115,7 @@ class wpcuFPN_Front {
 		elseif (strpos($this->widget->settings["theme"],'timeline')) {
 			$this->widget->settings["box_top"]=array("ImageFull");
 		}
-		else {	
+		else {
 			$this->widget->settings["box_top"]=array("ImageFull","Title","Date","Text");
 		}
 		$this->widget->settings["box_left"]=null;
@@ -398,8 +434,15 @@ class wpcuFPN_Front {
 			$nbcol=$this->widget->settings["amount_cols"];
 			$theme_classDashicon = ' ' . basename( $this->widget->settings['theme'] );
 
-			if($theme_classDashicon != " default")
-				wp_enqueue_style( 'themes-wplp'.$this->widget->ID, plugins_url("wp-latest-posts-addon/themes/").$theme_dir."/style.css.php?id=".$this->widget->ID."&color=".$color."&colorfull=".$colorfull."&nbcol=".$nbcol."&defaultColorTheme=".$colorTheme);
+            if(($theme_classDashicon != " default")  && ($theme_classDashicon != " oldDefault"))
+            {
+                wp_enqueue_style( 'themes-wplp'.$this->widget->ID, plugins_url("wp-latest-posts-addon/themes/").$theme_dir."/style.css.php?id=".$this->widget->ID."&color=".$color."&colorfull=".$colorfull."&nbcol=".$nbcol."&defaultColorTheme=".$colorTheme);
+            }
+
+//            if ($theme_classDashicon == " oldDefault")
+//            {
+//
+//            }
 			
 			if ( $theme_classDashicon == " masonry-category" || $theme_classDashicon == " timeline"){
 				wp_enqueue_style( 'dashicons' );
@@ -464,6 +507,11 @@ class wpcuFPN_Front {
 		}
 		
 		$theme_class = ' ' . basename( $this->widget->settings['theme'] );
+
+        if ($theme_class == " oldDefault")
+        {
+            $theme_class = " default";
+        }
 		
 		$theme_classpro="";
 		$masonry_class="";
@@ -503,8 +551,6 @@ class wpcuFPN_Front {
 			$style_cont="";
 			$themedefaut=" defaultflexslide";			
 		}
-		
-		
 			
 		$amount_cols_class = ' cols' . $this->widget->settings['amount_cols'];
 		
@@ -760,7 +806,6 @@ class wpcuFPN_Front {
 		$fields = $this->widget->settings['box_' . $box_name];
 		//if( !$fields )
 		//	return;
-		
 		if( is_array( $fields ) ) {
 			foreach( $fields as $field ) {
 				if( $inner = $this->field( $field ) ) {
@@ -812,8 +857,7 @@ class wpcuFPN_Front {
             $cropTextSize  = self::TIMELINE_TEXT_EM_SIZE;
             $cropTitleSize = self::TIMELINE_TITLE_EM_SIZE;
         }
-
-        elseif (strpos($this->widget->settings["theme"],'default'))
+        else
         {
             $cropTextSize  = self::DEFAULT_TEXT_EM_SIZE;
             $cropTitleSize = self::DEFAULT_TITLE_EM_SIZE;
@@ -1082,7 +1126,9 @@ class wpcuFPN_Front {
 
 			} else {
 				if( isset($this->widget->settings['default_img']) && $this->widget->settings['default_img'] ) {
-					$img = '<img src="' . $this->widget->settings['default_img'] . '" style="' . $style . '" alt="' . get_the_title() . '"  class="wpcufpn_default" />';
+                    $srcDefaultImage = $this->widget->settings['default_img'];
+
+                    $img = '<img src="' . $srcDefaultImage . '" style="' . $style . '" alt="' . get_the_title() . '"  class="wpcufpn_default" />';
 				} else {
 					$img = '<span class="img_placeholder" style="' . $style . '" class="wpcufpn_placeholder"></span>';
 				}
@@ -1100,6 +1146,34 @@ class wpcuFPN_Front {
                 {
 
                     $style .= 'height:'.$this->widget->settings['thumb_height']. 'px;';
+                } elseif(strpos($this->widget->settings["theme"],"default")) {
+                    $imageSize = "";
+                    if (isset($this->widget->settings['image_size']) && !empty($this->widget->settings['image_size']))
+                    {
+                        $imageSize = $this->widget->settings['image_size'];
+                    }
+                    $fetchImageSize = null;
+
+                    switch($imageSize) {
+                        case 'thumbnailSize':
+                            $fetchImageSize = 'thumbnail';
+                            break;
+
+                        case 'mediumSize':
+                            $fetchImageSize = 'medium';
+                            break;
+
+                        case 'largeSize':
+                            $fetchImageSize = 'large';
+                            break;
+                    }
+
+                    if (($fetchImageSize == "medium") || ($fetchImageSize == "large"))
+                    {
+                        $style .= 'height:'.$this->widget->settings['thumb_height']. 'px;';
+
+                    }
+
                 }
 			}
 			
@@ -1114,7 +1188,7 @@ class wpcuFPN_Front {
 			
 			$style .= 'max-width:100%;';
 			
-			$before = '<span class="img_cropper" style="' . $style . '">';
+			$before = '<span class="img_cropper" style="' .$style . '">';
 			$after = '</span>';
 						
 			return $before . $img . $after;
