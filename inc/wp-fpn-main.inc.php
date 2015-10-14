@@ -16,6 +16,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	const	MAIN_FRONT_STYLESHEET			= 'css/wpcufpn_front.css';		//Main front-end stylesheet
 	const	MAIN_FRONT_SCRIPT				= 'js/wpcufpn_front.js';		//Main front-end jQuery script
 	const 	DEFAULT_IMG						= 'img/default-image-fpnp.png';	//Default thumbnail image
+    //const   THEME_LIBRARY                   = 'themes/default/default.php';
 	
 	const	USE_LOCAL_JS_LIBS				= true;
 	
@@ -31,8 +32,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		'pg_source_asc'			=> 'desc',
 		'show_title'			=> 1,	// Wether or not to display the block title
 		'amount_pages'			=> 1,
-		'amount_cols'			=> 1,
-		'pagination'			=> 0,
+		'amount_cols'			=> 3,
+		'pagination'			=> 2,
 		'max_elts'				=> 5,
 		'total_width'			=> 100,
 		'total_width_unit'		=> 0,	//%
@@ -45,11 +46,12 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		'theme'					=> 'default',
 		'box_top'				=> array(),
 		'box_left'				=> array('Thumbnail'),
-		'box_right'				=> array('Date','Title','Text'),
+		'box_right'				=> array('Title','Date','Text'),
 		'box_bottom'			=> array(),
-		'thumb_img'				=> 0,	// 0 == use featured image
-		'thumb_width'			=> 60,	// in px
-		'thumb_height'			=> 60,	// in px
+		'thumb_img'				=> 1,	// 0 == use featured image
+		'image_size'            => 'mediumSize',
+        'thumb_width'			=> 150,	// in px
+        'thumb_height'			=> 150,	// in px
 		'crop_img'				=> 0,	// 0 == do not crop (== resize to fit)
 		'margin_left'			=> 0,
 		'margin_top'			=> 0,
@@ -59,7 +61,11 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		'date_fmt'				=> '',
 		'read_more'				=> '',
 		'default_img_previous'	=> '',	// Overridden in constructor
-		'default_img'			=> ''	// Overridden in constructor
+		'default_img'			=> '',	// Overridden in constructor
+        'dfThumbnail'           => 'Thumbnail',
+        'dfTitle'               => 'Title',
+        'dfText'                => 'Text',
+        'dfDate'                => 'Date',
 	);
 	
 	/** Specific field value properties to enforce **/
@@ -113,7 +119,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			'TextDomain'  => 'Text Domain',
 			'DomainPath'  => 'Domain Path',
 	);
-	
 	/**
 	 * Counts how many widgets are being displayed
 	 * @var int
@@ -131,8 +136,10 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		/** Check PHP and WP versions upon install **/
 		register_activation_hook( dirname( dirname( __FILE__ ) ), array( $this, 'activate' ) );
-		
-		/** Setup default image **/
+
+		//add_action('init', array($this, 'checkUsed'));
+
+        /** Setup default image **/
 		$this->_field_defaults['default_img_previous'] = plugins_url( self::DEFAULT_IMG, dirname( __FILE__ ) );
 		$this->_field_defaults['default_img'] = plugins_url( self::DEFAULT_IMG, dirname( __FILE__ ) );
 		
@@ -150,8 +157,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		
 		if( is_admin() ) {
-			
-			/** Load tabs ui + drag&drop ui **/
+
+            /** Load tabs ui + drag&drop ui **/
 			add_action('admin_enqueue_scripts', array( $this, 'loadAdminScripts' ) );
 			
 			/** Load admin css for tabs **/
@@ -184,7 +191,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			add_action( 'wp_print_styles',	array( $this, 'addFonts' ) );
 
 			/** Load our front-end slide control script **/
-			add_action( 'wp_print_scripts', array( $this, 'addFrontScript' ),0 );
+			//add_action( 'wp_print_scripts', array( $this, 'addFrontScript' ),0 );
 			add_action( 'the_posts' , array($this, 'prefixEnqueue'),100);
 			//add_action( 'after_setup_theme', array( $this, 'child_theme_setup' ) );
 		}
@@ -200,17 +207,51 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	public function activate( $wp = '3.2', $php = '5.3.1' ) {
 		global $wp_version;
 		if ( version_compare( PHP_VERSION, $php, '<' ) )
-			$flag = 'PHP';
-		elseif
-		( version_compare( $wp_version, $wp, '<' ) )
-		$flag = 'WordPress';
-		else
-			return;
-		$version = 'PHP' == $flag ? $php : $wp;
-		deactivate_plugins( basename( __FILE__ ) );
-		wp_die('<p>The <strong>WP Latest Posts</strong> plugin requires '.$flag.'  version '.$version.' or greater.</p>','Plugin Activation Error',  array( 'response'=>200, 'back_link'=>TRUE ) );
+        {
+            $flag = 'PHP';
+
+        } elseif ( version_compare( $wp_version, $wp, '<' ) ) {
+            $flag = 'WordPress';
+        } else {
+            $this->checkUsed();
+            return;
+        }
+        $version = 'PHP' == $flag ? $php : $wp;
+        deactivate_plugins( basename( __FILE__ ) );
+        wp_die('<p>The <strong>WP Latest Posts</strong> plugin requires '.$flag.'  version '.$version.' or greater.</p>','Plugin Activation Error',  array( 'response'=>200, 'back_link'=>TRUE ) );
 	}
-	
+    /**
+     * check user
+     * use new theme default for new users
+     */
+    public function checkUsed()
+    {
+        global $wpdb;
+        $oldBlock = get_option("_wpcufpn_onceLoad");
+        if (empty($oldBlock))
+        {
+            $meta_key = "_wpcufpn_settings";
+            $postsId = $wpdb->get_results($wpdb->prepare(" SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s ", $meta_key));
+            if ( ! empty($postsId))
+            {
+                foreach($postsId as $postId)
+                {
+                    $postId = $postId->post_id;
+                    $postMeta = get_post_meta($postId, "_wpcufpn_settings", true);
+                    if (strpos ($postMeta['theme'], "default"))
+                    {
+                        $postMeta['theme'] = str_replace("default", "oldDefault", $postMeta['theme']);
+                        $postMeta['theme'] = addslashes($postMeta['theme']);
+                        update_post_meta($postId, "_wpcufpn_settings", $postMeta);
+                    }
+                }
+            }
+            $onceLoad = 1;
+            add_option("_wpcufpn_onceLoad", $onceLoad, "", "no");
+        }
+
+    }
+
 	/** 
 	 * Sets up WP custom post types
 	 * 
@@ -239,7 +280,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			'supports'		=> array(
 				'title', 'author'
 			),
-			'menu_icon'				=> plugins_url( 'img/wpfpn-menu-icon.png', dirname( __FILE__ ) )
+			'menu_icon'				=> 'dashicons-admin-page',
 		) );
 	}
 	
@@ -278,7 +319,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			return;
 		*/
 	
-		$myFontsUrl 	= 	'http://fonts.googleapis.com/css?' .
+		$myFontsUrl 	= 	'https://fonts.googleapis.com/css?' .
 							'family=Raleway:400,500,600,700,800,900|' .
 							'Alegreya:400,400italic,700,700italic,900,900italic|' .
 							'Varela+Round' .
@@ -311,8 +352,8 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	 * @return inc $post_id (unchanged)
 	 */
 	public function saveCustomPostdata( $post_id ) {
-		
         global $post;
+
         if ( self::CUSTOM_POST_NEWS_WIDGET_NAME != get_post_type( $post_id ) )
 			return $post_id;
 		
@@ -330,6 +371,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			return $post_id;
 		
 		$my_settings = get_post_meta( $post->ID, '_wpcufpn_settings', true );
+        //var_dump($my_settings); die();
 		$my_settings = wp_parse_args( $my_settings, $this->_field_defaults );
 		
 		/** File uploads **/
@@ -368,7 +410,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 				}
 			}
 		}
-		
+		//var_dump($_POST);
 		/** Normal fields **/
 		foreach( $_POST as $field_name => $field_value ) {
 			if( preg_match( '/^wpcufpn_/', $field_name ) ) {
@@ -418,7 +460,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 				}
 			}
 		}
-		
 		update_post_meta( $post_id, '_wpcufpn_settings', $my_settings );
 		
 		return $post_id;
@@ -436,7 +477,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		if( wpcuWPFnPlugin::CUSTOM_POST_NEWS_WIDGET_NAME != get_post_type() )
 			return $hook;
-				
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-ui');
 		wp_enqueue_script('jquery-ui-core');
@@ -456,13 +496,13 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			true
 		);
 		*/
-		wp_enqueue_script(
-			'wpcufpn-colorpicker',
-			plugins_url( 'js/wpcufpn_colorpicker.js', dirname( __FILE__ ) ),
-			array( 'jquery' ),
-			'0.1',
-			true
-		);
+//		wp_enqueue_script(
+//			'wpcufpn-colorpicker',
+//			plugins_url( 'js/wpcufpn_colorpicker.js', dirname( __FILE__ ) ),
+//			array( 'jquery' ),
+//			'0.1',
+//			true
+//		);
 		
 		wp_enqueue_script(
 			'wpcufpn-back',
@@ -471,8 +511,13 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			'0.1',
 			true
 		);
-		
-		
+        wp_enqueue_script( 'wp-color-picker');
+
+        wp_enqueue_script('wpcufpn-newColorPicker', plugins_url('js/wpcufpn_newColorPicker.js', dirname(__FILE__)),
+            array('jquery'),
+            '0.1',
+            true
+            );
 	}
 	
 	/**
@@ -482,7 +527,10 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	 */
 	function addAdminStylesheets() {
 		
-		wp_register_style( 'uiStyleSheet', plugins_url( 'css/jquery-ui-custom.css', dirname( __FILE__ ) ) );
+		/** add color picker css */
+        wp_enqueue_style('wp-color-picker');
+
+        wp_register_style( 'uiStyleSheet', plugins_url( 'css/jquery-ui-custom.css', dirname( __FILE__ ) ) );
 		
 		wp_enqueue_style( 'uiStyleSheet' );
 		
@@ -779,14 +827,15 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			$pagination_selected[$settings['pagination']] = ' selected="selected"';
 		if( isset($settings['total_width_unit']) )
 			$units_selected[$settings['total_width_unit']] = ' selected="selected"';
-		
+
+
 		/*
 		 * 
 		 * Specific parameters with Mansonry
 		 * 
 		 */ 
 		$classdisabled="";
-		if (strpos($settings["theme"],'masonry')){
+		if (strpos($settings["theme"],'masonry') || strpos($settings["theme"],'portfolio')){
 			$classdisabled=" disabled";
 		}
 		
@@ -794,7 +843,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		if (strpos($settings["theme"],'timeline') ){
 			$classdisabledsmooth=" disabled";
 		}
-		
+
 		echo '<div class="wpcu-inner-admin-col">';
 		
 		// -block---------------------------------- //
@@ -814,9 +863,14 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<li class="field '.$classdisabled.$classdisabledsmooth.'"><label for="amount_pages" class="coltab">' . __( 'Number of pages with posts', 'wpcufpn' ) . '</label>' .
 			'<input id="amount_pages" type="text" name="wpcufpn_amount_pages" value="' . htmlspecialchars( isset($settings['amount_pages'])?$settings['amount_pages']:'' ) . '" class="short-text" '.$classdisabled.$classdisabledsmooth.'/></li>';
 		*/
-		echo '<li class="field '.$classdisabledsmooth.'"><label for="amount_cols" class="coltab">' . __( 'Number of columns', 'wpcufpn' ) . '</label>' .
-			'<input id="amount_cols" type="text" name="wpcufpn_amount_cols" value="' . htmlspecialchars( isset($settings['amount_cols'])?$settings['amount_cols']:'' ) . '" class="short-text" '.$classdisabledsmooth.'/></li>';
-			
+        /*
+         * display number of columns
+         */
+		echo '<li class="field '.$classdisabledsmooth.'"><label for="   amount_cols" class="coltab">' . __( 'Number of columns', 'wpcufpn' ) . '</label>' .
+			'<input id="amount_cols" type="text" name="wpcufpn_amount_cols" value="' . htmlspecialchars( isset($settings['amount_cols'])?$settings['amount_cols']:'3' ) . '" class="short-text" '.$classdisabledsmooth.'/></li>';
+		/*
+		 * display number of rows
+		 */
 		echo '<li class="field '.$classdisabled.$classdisabledsmooth.'"><label for="amount_rows" class="coltab">' . __( 'Number of rows', 'wpcufpn' ) . '</label>' .
 			'<input id="amount_rows" type="text" name="wpcufpn_amount_rows" value="' . htmlspecialchars( isset($settings['amount_rows'])?$settings['amount_rows']:'' ) . '" class="short-text" '.$classdisabled.$classdisabledsmooth.'/></li>';
 				
@@ -835,10 +889,15 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			echo '</option>';
 		}
 		echo '</select></li>';
-		
+		/*
+		 * display max elements
+		 */
 		echo '<li class="field"><label for="max_elts" class="coltab">' . __( 'Max number of elements', 'wpcufpn' ) . '</label>' .
 				'<input id="max_elts" type="text" name="wpcufpn_max_elts" value="' . htmlspecialchars( isset($settings['max_elts'])?$settings['max_elts']:'' ) . '" class="short-text" /></li>';
-		echo '<li class="field"><label for="total_width" class="coltab">' . __( 'Total width', 'wpcufpn' ) . '</label>' .
+		/*
+		 * display total width
+		 */
+        echo '<li class="field"><label for="total_width" class="coltab">' . __( 'Total width', 'wpcufpn' ) . '</label>' .
 				'<input id="total_width" type="text" name="wpcufpn_total_width" value="' . htmlspecialchars( isset($settings['total_width'])?$settings['total_width']:'' ) . '" class="short-text" />';
 		
 		/** Width units drop-down **/
@@ -855,11 +914,11 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		// ---------------------------------------- //
 		
 		if( !class_exists('wpcuWPFnProPlugin') ) {
-			echo '<div class="wpcu-inner-admin-block wpcu yellowed"><p>' .
+			echo '<div class="wpcufpn_pro_reminder_rows wpcu-inner-admin-block notice notice-success is-dismissible below-h2"><p>' .
 				__(
 					'Additional advanced customization features<br/> and various beautiful ' .
 					'pre-configured templates and themes<br/> are available with the optional ' .
-					'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">pro add-on</a>.'
+					'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts" target="_blank">pro add-on</a>.'
 				) .
 			'</p></div>';
 		} else {
@@ -882,10 +941,15 @@ class wpcuWPFnPlugin extends YD_Plugin {
 				'<select id="theme" name="wpcufpn_theme">';
 		$all_themes = (array)$this->themeLister();
 		wp_localize_script( 'wpcufpn-back', 'themes', $all_themes );
-		
 		//var_dump( $all_themes );	//Debug
 		foreach( $all_themes as $dir=>$theme ) {
-			echo '<option value="' . $dir . '" ' . (isset($theme_selected[$dir])?$theme_selected[$dir]:'') . '>';
+            $idOldDefault = "";
+            $disabled = "";
+            if ($theme['name'] == "Old Default theme")
+            {
+                $idOldDefault = 'id="oldDefaultThemeOption"';
+            }
+            echo '<option '.$idOldDefault.' value="' . $dir . '" ' . (isset($theme_selected[$dir])?$theme_selected[$dir]:'') . '>';
 			echo $theme['name'];
 			echo '</option>';	
 		}
@@ -923,69 +987,25 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		 * 
 		 * Remove configuration
 		 * 
-		 */  		
-		$classdisabled="";
-		if (strpos($settings["theme"],'masonry')){
-			$classdisabled=" disabled";
-		}
+		 */
 		
 		if( !class_exists('wpcuWPFnProPlugin') ) {
 			$classdisabled=" disabled";
 		} else {
 			$classdisabled="";
 		}
-		
-		// -block---------------------------------- //
-		echo '<div id="wpcufpn_config_zone" class="wpcu-inner-admin-block with-title with-border '.$classdisabled.$classdisabledsmooth.'">';
-		echo '<h4>A news item</h4>';
-		echo '<div class="wpcufpn-drag-config"></div>';
-		echo '<div class="arrow_col_wrapper"><ul class="arrow_col">';
-		echo '<li>Title</li>';
-		echo '<li>Text</li>';
-		//echo '<li>First image</li>';	<- Unused
-		echo '<li>Thumbnail</li>';
-		echo '<li>Read more</li>';
-		echo '<li>Author</li>';
-		echo '<li>Date</li>';
-		echo '</ul></div>';	//arrow_col
-		echo '<div class="drop_zone_col">';
-		echo '<div id="box_top" class="wpcu-inner-admin-block with-title with-border top">';
-		echo '<h5>Top</h5><ul class="sortable">';
-		if( isset($settings['box_top']) && !empty($settings['box_top']) && $settings['box_top'] )
-			echo $box_top = '<li>' . join( '</li><li>', $settings['box_top'] ) . '</li>';
-		echo '</ul>';
-		echo '</div>';
-		echo '<div id="box_left" class="wpcu-inner-admin-block with-title with-border left">';
-		echo '<h5>Left</h5><ul class="sortable">';
-		if( isset($settings['box_left']) && !empty($settings['box_left']) && $settings['box_left'] )
-			echo $box_left = '<li>' . join( '</li><li>', $settings['box_left'] ) . '</li>';
-		echo '</ul>';
-		echo '</div>';
-		echo '<div id="box_right" class="wpcu-inner-admin-block with-title with-border right">';
-		echo '<h5>Right</h5><ul class="sortable">';
-		if( isset($settings['box_right']) && !empty($settings['box_right']) && $settings['box_right'] )
-			echo $box_right = '<li>' . join( '</li><li>', $settings['box_right'] ) . '</li>';
-		echo '</ul>';
-		echo '</div>';
-		echo '<div id="box_bottom" class="wpcu-inner-admin-block with-title with-border bottom">';
-		echo '<h5>Bottom</h5><ul class="sortable">';
-		if( isset($settings['box_bottom']) && !empty($settings['box_bottom']) && $settings['box_bottom'] )
-			echo $box_bottom = '<li>' . join( '</li><li>', $settings['box_bottom'] ) . '</li>';
-		echo '</ul>';
-		echo '</div>';
-		
-		//echo '<div id="trash_cont"><ul id="trashbin" class="sortable"></ul></div>';
-		
-		echo '</div>';	//drop_zone_col
-		
-		echo '</div>';	//wpcu-inner-admin-block #wpcufpn_config_zone
-		echo '<input type="hidden" id="wpcufpn_box_top" name="wpcufpn_box_top" value="' . htmlspecialchars( $box_top ) . '"/>';
-		echo '<input type="hidden" id="wpcufpn_box_left" name="wpcufpn_box_left" value="' . htmlspecialchars( $box_left ) . '"/>';
-		echo '<input type="hidden" id="wpcufpn_box_right" name="wpcufpn_box_right" value="' . htmlspecialchars( $box_right ) . '"/>';
-		echo '<input type="hidden" id="wpcufpn_box_bottom" name="wpcufpn_box_bottom" value="' . htmlspecialchars( $box_bottom ) . '"/>';
-		// ---------------------------------------- //
-		
-		echo '</div>';	//wpcu-inner-admin-col
+        /**
+         * check WPLP Block
+         */
+
+        if (strpos($settings['theme'], "oldDefault"))
+        {
+            $classdisabled=" disabled";
+            include_once(dirname(plugin_dir_path(__FILE__)) . '/themes/oldDefault/oldDefault.php');
+
+        } else {
+            include_once(dirname(plugin_dir_path(__FILE__)) . '/themes/default/default.php');
+        }
 	}
 	
 	/**
@@ -997,14 +1017,14 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		$settings = get_post_meta( $post->ID, '_wpcufpn_settings', true );
 		if( empty( $settings ) )
 			$settings = $this->_field_defaults;
-		
+
 		if( isset($settings['thumb_img']) )
 			$thumb_selected[$settings['thumb_img']] = ' selected="selected"';
-		
+
 		echo '<ul class="fields">';
 		
 		/** Thumbnail image src drop-down **/
-		echo '<li class="field"><label for="thumb_img" class="coltab">' . __( 'Thumbnail image', 'wpcufpn' ) . '</label>' .
+		echo '<li class="field"><label for="thumb_img" class="coltab">' . __( 'Select Image', 'wpcufpn' ) . '</label>' .
 			'<select id="thumb_img" name="wpcufpn_thumb_img">';
 		foreach( $this->_thumb_img_values as $value=>$text ) {
 			echo '<option value="' . $value . '" ' . (isset($thumb_selected[$value])?$thumb_selected[$value]:'') . '>';
@@ -1012,15 +1032,43 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			echo '</option>';
 		}
 		echo '</select></li>';
-		
-		/** Thumbnail size combined width x height setting fields **/
-		echo '<li class="field"><label for="thumb_width" class="coltab">' . __( 'Thumbnail size', 'wpcufpn' ) . '</label>' .
-				'<span class="width_height_settings">' .
-				'<input id="thumb_width" type="text" name="wpcufpn_thumb_width" value="' . htmlspecialchars( isset($settings['thumb_width'])?$settings['thumb_width']:'' ) . '" class="short-text" />' .
-				'x' .
-				'<input id="thumb_height" type="text" name="wpcufpn_thumb_height" value="' . htmlspecialchars( isset($settings['thumb_height'])?$settings['thumb_height']:'' ) . '" class="short-text" />' .
-				'px' .
-			'</span></li>';
+
+        /**
+         * selected
+         */
+        $imageThumbSizeSelected     = '';
+        $imageMediumSizeSelected    = '';
+        $imageLargeSizeSelected     = '';
+
+        /**
+         * fix notice when update from old version
+         */
+        if ( ! isset($settings['image_size'])) {
+            $settings['image_size'] = "";
+        }
+
+        if ($settings['image_size'] == "thumbnailSize")
+        {
+            $imageThumbSizeSelected = 'selected="selected"';
+
+        } elseif ($settings['image_size'] == "mediumSize") {
+
+            $imageMediumSizeSelected = 'selected="selected"';
+
+        } elseif ($settings['image_size'] == "largeSize") {
+
+            $imageLargeSizeSelected = 'selected="selected"';
+        }
+		/** image Size field **/
+		echo '<li class="field"><label for="thumb_width" class="coltab">' . __( 'Image size', 'wpcufpn' ) . '</label>' .
+				'<select id="wpcufpn_imageThumbSize" name="wpcufpn_image_size">
+				<option  '.$imageThumbSizeSelected.' value="thumbnailSize" >' .__( 'Thumbnail', 'wpcufpn' ).'</option>
+
+				<option  '.$imageMediumSizeSelected.' value="mediumSize" >' .__( 'Medium', 'wpcufpn' ).'</option>
+
+                <option  '.$imageLargeSizeSelected.' value="largeSize" >' .__( 'Large', 'wpcufpn' ).'</option>
+
+			</select></li>';
 		
 		do_action( 'wpcufpn_displayimagesource_crop_add_fields', $settings );
 		
@@ -1046,10 +1094,10 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		// ---------------------------------------- //
 		
 		if( !class_exists('wpcuWPFnProPlugin') ) {
-			echo '<p class="wpcu pro_reminder"><div class="wpcu yellowed">' . 
+			echo '<p class="wpcu pro_reminder"><div class="wpcufpn_pro_reminder_row notice notice-success is-dismissible below-h2">' .
 				__(
 					'Additional advanced customization features are available with the optional ' .
-					'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">pro add-on</a>.'
+					'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts" target="_blank" >pro add-on</a>.'
 				) . 
 			'</div></p>';
 		} else {
@@ -1070,7 +1118,9 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<ul class="fields">';
 		
 		echo '<li class="field"><label for="date_fmt" class="coltab">' . __( 'Date format', 'wpcufpn' ) . '</label>' .
-			'<input id="date_fmt" type="text" name="wpcufpn_date_fmt" value="' . htmlspecialchars( isset($settings['date_fmt'])?$settings['date_fmt']:'' ) . '" class="short-text" /></li>';
+			'<input id="date_fmt" type="text" name="wpcufpn_date_fmt" value="' . htmlspecialchars( isset($settings['date_fmt'])?$settings['date_fmt']:'' ) . '" class="short-text" />
+			<a id="wpcufpn_dateFormat" target="_blank" href="http://php.net/manual/en/function.date.php"> ' . __( 'Date format', 'wpcufpn' ) . ' </a>
+			</li>';
 		
 		echo '<li class="field"><label for="text_content" class="coltab">' . __( 'Text Content', 'wpcufpn' ) . '</label>' .
 		    '<select name="wpcufpn_text_content" id="text_content">' .
@@ -1084,19 +1134,23 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		
 		if( !class_exists('wpcuWPFnProPlugin') ) {
-			echo '<div class="wpcu yellowed halfed">';
+			echo '<div class="wpcufpn_pro_reminder_rows halfed notice notice-success is-dismissible below-h2">';
 			echo '<p>' . __('Looking out for more <em>advanced</em> features?') . '</p>';
-			echo '<p>' . __('&rarr;&nbsp;Check out our optional <a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">"Pro" add-on</a>.') . '</p>';
+			echo '<p>' . __('&rarr;&nbsp;Check out our optional <a href="http://www.joomunited.com/wordpress-products/wp-latest-posts" target="_blank" >"Pro" add-on</a>.') . '</p>';
 			echo '</div>';
 		} else {
 			do_action( 'wpcufpn_displayadvanced_add_fields', $settings );
 		}
 		
 			
-		echo '<hr/><div><label for="custom_css" class="coltab">' . __( 'Custom CSS', 'wpcufpn' ) . '</label>' .
+		echo '<hr/><div><label for="custom_css" class="coltab" style="vertical-align:top">' . __( 'Custom CSS', 'wpcufpn' ) . '</label>' .
 			'<textarea id="custom_css" cols="100" rows="5" name="wpcufpn_custom_css">' . ( isset($settings['custom_css'])?$settings['custom_css']:'' ) . '</textarea></div>';
-		
-		 
+
+        if (isset($post->ID) && isset($post->post_title) && (!empty($post->post_title)))
+        {
+            echo '<hr/><div><label for="phpCodeInsert" class="coltab" style="margin:10px 0 5px">' . __( 'Copy & paste this code into a template file to display this WPLP block', 'wpcufpn' ) . '</label>' .
+                '<br><textarea readonly id="phpCodeInsert" cols="100" rows="2" name="wpcufpn_phpCodeInsert">'.__( 'echo do_shortcode(\'[frontpage_news widget="'.$post->ID.'" name="'.$post->post_title.'"]\');' , "wpcufpn" ) . '</textarea></div>';
+        }
 	}
 	
 	/**
@@ -1269,10 +1323,10 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '</li>';	//field
 		
 		if( !class_exists('wpcuWPFnProPlugin') ) {
-			echo '</ul><p class="wpcu pro_reminder"><div class="wpcu yellowed">' .
+			echo '</ul><p class="wpcu pro_reminder"><div class="wpcufpn_pro_reminder_row notice notice-success is-dismissible below-h2" >' .
 				__(
 					'Additional content source options are available with the optional ' .
-					'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">pro add-on</a>.'
+					'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts" target="_blank" >pro add-on</a>.'
 				) .
 			'</div></p><ul>';
 		} else {
@@ -1308,10 +1362,10 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		if( !class_exists('wpcuWPFnProPlugin') ) {
 			echo '<li><input id="pages_all" type="checkbox" name="wpcufpn_source_pages[]" value="_all" checked="checked"  disabled="disabled" />' .
 				'<label for="pages_all" class="post_cb">All</li>';
-			echo '<li><p class="wpcu pro_reminder"><div class="wpcu yellowed">' .
+			echo '<li><p class="wpcu pro_reminder"><div class="wpcufpn_pro_reminder_row notice notice-success is-dismissible below-h2">' .
 				__(
 						'Additional content source options are available with the optional ' .
-						'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts">pro add-on</a>.'
+						'<a href="http://www.joomunited.com/wordpress-products/wp-latest-posts" target="_blank" >pro add-on</a>.'
 				) .
 			'</div></p></li>';
 		} else {
@@ -1350,7 +1404,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
         $found_themes = array();
 		$theme_root = dirname( dirname( __FILE__ ) ) . '/themes';
 		//echo 'theme dir: ' . $theme_root . '<br/>';	//Debug
-		
 		$dirs = @ scandir( $theme_root );
 		foreach ( $dirs as $k=>$v ) {
 			if( ! is_dir( $theme_root . '/' . $v ) || $v[0] == '.' || $v == 'CVS' ) {
@@ -1432,20 +1485,17 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		$args = wp_parse_args( $args, array(
 			'text'      => __( 'Add Latest Posts', 'wpcufpn' ),
 			'class'     => 'button',
-			'icon'      => plugins_url( 'img/wpfpn-menu-icon.png', dirname( __FILE__ ) ),
 			'echo'      => true
 		) );
 
-		/** Prepare icon **/
-		if ( $args['icon'] ) $args['icon'] = '<img src="' . $args['icon'] . '" /> ';
-		
 		/** Print button **/
 		//$button = '<a href="javascript:void(0);" class="wpcufpn-button ' . $args['class'] . '" title="' . $args['text'] . '" data-target="' . $args['target'] . '" data-mfp-src="#su-generator" data-shortcode="' . (string) $args['shortcode'] . '">' . $args['icon'] . $args['text'] . '</a>';
 		$button = '<a href="#TB_inline?height=150&width=150&inlineId=wpcufpn-popup-wrap&modal=true" ' .
 			'class="wpcufpn-button thickbox ' . $args['class'] . '" ' .
-			'title="' . $args['text'] . '">' . 
-			$args['icon'] . $args['text'] . 
-		'</a>';
+			'title="' . $args['text'] . '">' .
+			'<span style = "vertical-align: text-top" class="dashicons dashicons-admin-page"></span>' . $args['text'] .
+		'</a>'
+        ;
 		
 		/** Prepare insertion popup **/
 		add_action( 'admin_footer', array( $this, 'insertPopup' ) );
@@ -1638,6 +1688,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
                 $widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
 				$front = new wpcuFPN_Front( $widget );
 				$front->loadThemeStyle();
+                $front->loadThemeScript();
 				$html .= $front->display( false );
 			} else {
 				$html .= "\n<!-- WPFN: this News Widget is not initialized -->\n";

@@ -5,14 +5,16 @@
 	text-align: left;
 	overflow: hidden;
 }
+
 .wpcufpn_container {
 	text-align: center;
 	display: block;
 	overflow: hidden;
-	position:relative;
+	position: relative;
 	height: 250px;
-	/*background: #fff;*/
+	/*background: #fff;*/;
 }
+
 .wpcufpn_container ul {
 	display: block;
 	list-style: none;
@@ -21,6 +23,11 @@
 	position: absolute;
 	overflow: hidden;
 }
+
+.wpcufpn_container ul {
+	margin-left: 2px;
+}
+
 .entry-content .wpcufpn_container li,.wpcufpn_container li {
 	display: inline-block;
 	float: left;
@@ -30,8 +37,9 @@
 	/*
 	padding: 0 0 3px 1px;
 	box-sizing: border-box;
-	*/
+	*/;
 }
+
 .wpcufpn_container table,
 .wpcufpn_container table tr,
 .wpcufpn_container table tr td {
@@ -39,7 +47,7 @@
 	border-width: 0 !important;
 	vertical-align: top !important;
 	margin: 0 !important;
-	padding:0 !important;
+	padding: 0 !important;
 }
 
 /*
@@ -47,7 +55,7 @@
 	width: 100%;
 	/*overflow: hidden;*/
 	/*table-layout: fixed;*/
-}
+/*}
 */
 
 .wpcufpn_container a,
@@ -57,20 +65,33 @@
 	text-decoration: none !important;
 	color: inherit !important;
 }
+
 .wpcu_block_title {
 	text-align: left;
 	font-weight: bold;
-	font-size: 2.2em;
+	font-size: 1.5em;
 	line-height: 2.2em;
 	color: #666;
+}
+
+.wpcufpn_container.default .author {
+	font-size: 0.9em;
+	line-height: 1.23;
+    display: block;
+}
+
+.wpcufpn_container.default .title {
+	font-size: 0.9em;
+	line-height: 1.23;
+    display: block;
 }
 
 .wpcufpn_container .title {
 	color: #333;
 	font-weight: bold;
-	font-size: 1.15em;
+	font-size: 1.1em;
 	text-align: left;
-	line-height: 1.15em;
+	line-height: 1.1em;
 	max-width: 80%;
 	overflow: hidden;
 }
@@ -84,38 +105,55 @@
 .wpcufpn_container .thumbnail {
 	display: block;
 	overflow: hidden;
+    border: none;
+    padding: 0;
 }
+
+.wpcufpn_container.default .text,
+.wpcufpn_container.default .date {
+	font-size: 0.8em;
+	line-height: 1.4;
+	padding-bottom: 3px;
+}
+
 .wpcufpn_container .text,
 .wpcufpn_container .date {
 	overflow: hidden;
 	display: block;
 	text-align: left;
-	line-height: 1.1;
+	line-height: 1.23;
+	font-size: 1.1em;
 	font-weight: normal;
 	text-overflow: ellipsis;
 }
+
 .wpcufpn_container .date {
-	color:#666;
+	color: #666;
 }
+
 .wpcufpn_container .text span {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 100%;
 }
+
 .wpcufpn_container .read-more {
 	display: block;
 	color: #888;
-	font-size: 13px;
+	font-size: 0.9em;
 	text-align: right;
+    padding-right: 5px;
 }
+
 span.img_cropper {
 	overflow: hidden;
 	display: block;
 	position: relative;
 }
+
 span.img_cropper img {
-	vertical-align:middle !important;
-	display:block !important;
+	vertical-align: middle !important;
+	display: block !important;
 	max-width: none !important;
 }
 
@@ -124,31 +162,36 @@ span.line_limit {
 	display: inline-block;
 	max-width: 100%;
 }
-.wpcufpn_container .title .line_limit {
 
+.wpcufpn_container a {
+	border: 0;
 }
 
 .wpcu-front-box {
-	/*margin: 3px;*/
+	/*margin: 3px;*/;
 }
+
 .wpcu-front-box.left {
 	margin: 0;
 	padding: 0;
 }
+
 .wpcu-front-box.right {
 	margin: 0;
 	padding: 0;
 }
 
 .wpcu-front-box.left {
-	/*display: block;*/
+	/*display: block;*/;
 }
+
 .wpcu-front-box.right {
 /*	display: inline-block; */
 /*	min-width: 25%;*/
 /*	max-width: 75%;	/*?*/
-/*	float: right; */
+/*	float: right; */;
 }
+
 .wpcu-front-box.top,
 .wpcu-front-box.bottom {
 	display: block;
@@ -163,15 +206,14 @@ div.wpcufpn_nav {
 
 .entry-content div.wpcufpn_nav a,
 div.wpcufpn_nav a {
-	text-decoration: none !important;	
+	text-decoration: none !important;
 }
 
 div.wpcufpn_nav .pagi_p.squarebullet {
     /* Hide the text. */
-    text-indent: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-	
+	text-indent: 100%;
+	white-space: nowrap;
+	overflow: hidden;
 	display: inline-block;
 	width: 10px;
 	height: 10px;
@@ -185,7 +227,7 @@ div.wpcufpn_nav .pagi_p.squarebullet.active {
 
 /** override WP default theme **/
 .widget .wpcufpn_outside img {
-	max-width: none !important;	
+	max-width: none !important;
 }
 
 .entry-content .wpcufpn_outside img {
@@ -198,7 +240,10 @@ div.wpcufpn_nav .pagi_p.squarebullet.active {
  * New default Theme
  * 
  */
-.wpcufpn_container.default{height:auto;}
+.wpcufpn_container.default {
+	height: auto;
+}
+
 .wpcufpn_container.default ul {
 	position: relative;
 	height: auto;
@@ -233,10 +278,17 @@ div.wpcufpn_nav .pagi_p.squarebullet.active {
 .flex-container a:active,
 .wpcufpn_container.default a:active,
 .flex-container a:focus,
-.wpcufpn_container.default a:focus  {outline: none;}
+.wpcufpn_container.default a:focus {
+	outline: none;
+}
+
 .defaultflexslide,
 .flex-control-nav,
-.flex-direction-nav {margin: 0; padding: 0; list-style: none;}
+.flex-direction-nav {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
 
 /* Icon Fonts
 *********************************/
@@ -254,65 +306,258 @@ div.wpcufpn_nav .pagi_p.squarebullet.active {
 
 /* FlexSlider Necessary Styles
 *********************************/
-.wpcufpn_container.default {margin: 0; padding: 0;}
-.wpcufpn_container.default .defaultflexslide > li {display: none; -webkit-backface-visibility: hidden;} /* Hide the slides before the JS is loaded. Avoids image jumping */
-.wpcufpn_container.default .defaultflexslide img {width: 100%; display: block;}
-.flex-pauseplay span {text-transform: capitalize;}
+.wpcufpn_container.default {
+	margin: 0;
+	padding: 0;
+}
+
+.wpcufpn_container.default .defaultflexslide > li {
+	display: none;
+	-webkit-backface-visibility: hidden;
+} /* Hide the slides before the JS is loaded. Avoids image jumping */
+.wpcufpn_container.default .defaultflexslide img {
+	width: 100%;
+	display: block;
+}
+
+.flex-pauseplay span {
+	text-transform: capitalize;
+}
 
 /* Clearfix for the .defaultflexslide element */
-.defaultflexslide:after {content: "\0020"; display: block; clear: both; visibility: hidden; line-height: 0; height: 0;}
-html[xmlns] .defaultflexslide {display: block;}
-* html .defaultflexslide {height: 1%;}
+.defaultflexslide:after {
+	content: "\0020";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+
+html[xmlns] .defaultflexslide {
+	display: block;
+}
+
+* html .defaultflexslide {
+	height: 1%;
+}
 
 /* No JavaScript Fallback */
 /* If you are not using another script, such as Modernizr, make sure you
  * include js that eliminates this class on page load */
-.no-js .defaultflexslide > li:first-child {display: block;}
+.no-js .defaultflexslide > li:first-child {
+	display: block;
+}
 
 /* FlexSlider Default Theme
 *********************************/
-.wpcufpn_container.default { zoom: 1;position: relative; }
-.flex-viewport { max-height: 2000px; -webkit-transition: all 1s ease; -moz-transition: all 1s ease; -o-transition: all 1s ease; transition: all 1s ease; }
-.loading .flex-viewport { max-height: 300px; }
-.wpcufpn_container.default .defaultflexslide { zoom: 1; }
-.carousel li { margin-right: 5px; }
+.wpcufpn_container.default {
+	zoom: 1;
+	position: relative;
+}
+
+.flex-viewport {
+	max-height: 2000px;
+	-webkit-transition: all 1s ease;
+	-moz-transition: all 1s ease;
+	-o-transition: all 1s ease;
+	transition: all 1s ease;
+}
+
+.loading .flex-viewport {
+	max-height: 300px;
+}
+
+.wpcufpn_container.default .defaultflexslide {
+	zoom: 1;
+}
+
+.carousel li {
+	margin-right: 5px;
+}
 
 
 
 /* Direction Nav */
-.flex-direction-nav {height: 0 !important;position: static !important; }
-.flex-direction-nav a  {line-height:1; text-decoration:none; display: block; width: 40px; height: 40px; margin: -44px 0 0; position: absolute; top: 50%; z-index: 10; 
-overflow: hidden; opacity: 1; cursor: pointer; color: rgba(0,0,0,0.8); text-shadow: 1px 1px 0 rgba(255,255,255,0.3); -webkit-transition: all .3s ease; -moz-transition: all .3s ease; transition: all .3s ease; }
-.flex-direction-nav .flex-prev { left: -50px; }
-.flex-direction-nav .flex-next { right: -50px; text-align: right; }
-.flex-direction-nav .flex-disabled { opacity: 0!important; filter:alpha(opacity=0); cursor: default; }
-.flex-direction-nav a:before  { font-family: "flexslider-icon"; font-size: 40px; display: inline-block; content: '\f001'; }
-.flex-direction-nav a.flex-next:before  { content: '\f002'; }
+.flex-direction-nav {
+	height: 0 !important;
+	position: static !important;
+}
+
+.flex-direction-nav a {
+	border: 0;
+	line-height: 1;
+	text-decoration: none;
+	display: block;
+	width: 40px;
+	height: 40px;
+	margin: -44px 0 0;
+	position: absolute;
+	top: 50%;
+	z-index: 10;
+	overflow: hidden;
+	opacity: 1;
+	cursor: pointer;
+	color: rgba(0,0,0,0.8);
+	text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+	-webkit-transition: all .3s ease;
+	-moz-transition: all .3s ease;
+	transition: all .3s ease;
+}
+
+.flex-direction-nav .flex-prev {
+	left: -50px;
+}
+
+.flex-direction-nav .flex-next {
+	right: -50px;
+	text-align: right;
+}
+
+.flex-direction-nav .flex-disabled {
+	opacity: 0!important;
+	filter: alpha(opacity=0);
+	cursor: default;
+}
+
+.flex-direction-nav a:before {
+	font-family: "flexslider-icon";
+	font-size: 40px;
+	display: inline-block;
+	content: '\f001';
+}
+
+.flex-direction-nav a.flex-next:before {
+	content: '\f002';
+}
 
 /* Pause/Play */
-.flex-pauseplay a { display: block; width: 20px; height: 20px; position: absolute; bottom: 5px; left: 10px; opacity: 0.8; z-index: 10; overflow: hidden; cursor: pointer; color: #000; }
-.flex-pauseplay a:before  { font-family: "flexslider-icon"; font-size: 20px; display: inline-block; content: '\f004'; }
-.flex-pauseplay a:hover  { opacity: 1; }
-.flex-pauseplay a.flex-play:before { content: '\f003'; }
-.wpcufpn_container.default:hover .flex-prev { opacity: 0.7; left: 10px; }
-.wpcufpn_container.default:hover .flex-next { opacity: 0.7; right: 10px; }
+.flex-pauseplay a {
+	display: block;
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	bottom: 5px;
+	left: 10px;
+	opacity: 0.8;
+	z-index: 10;
+	overflow: hidden;
+	cursor: pointer;
+	color: #000;
+}
+
+.flex-pauseplay a:before {
+	font-family: "flexslider-icon";
+	font-size: 20px;
+	display: inline-block;
+	content: '\f004';
+}
+
+.flex-pauseplay a:hover {
+	opacity: 1;
+}
+
+.flex-pauseplay a.flex-play:before {
+	content: '\f003';
+}
+
+.wpcufpn_container.default:hover .flex-prev {
+	opacity: 0.7;
+	left: 10px;
+}
+
+.wpcufpn_container.default:hover .flex-next {
+	opacity: 0.7;
+	right: 10px;
+}
+
 .wpcufpn_container.default:hover .flex-next:hover,
-.wpcufpn_container.default:hover .flex-prev:hover { opacity: 1; color: rgba(0,0,0,0.2);}
+.wpcufpn_container.default:hover .flex-prev:hover {
+	opacity: 1;
+	color: rgba(0,0,0,0.2);
+}
 
 /* Control Nav */
-.flex-control-nav {width: 100%;margin-top: 10px;text-align: center; }
-.flex-control-nav li {margin: 0 6px; display: inline-block; zoom: 1; *display: inline;float: none;}
-.flex-control-paging li a {width: 11px; height: 11px; display: block; background: #666; background: rgba(0,0,0,0.5); cursor: pointer; text-indent: -9999px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -o-border-radius: 20px; border-radius: 20px; -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.3); -moz-box-shadow: inset 0 0 3px rgba(0,0,0,0.3); -o-box-shadow: inset 0 0 3px rgba(0,0,0,0.3); box-shadow: inset 0 0 3px rgba(0,0,0,0.3); }
-.flex-control-paging li a:hover { background: #333; background: rgba(0,0,0,0.7); }
-.flex-control-paging li a.flex-active { background: #000; background: rgba(0,0,0,0.9); cursor: default; }
+.flex-control-nav {
+	width: 100%;
+	margin-top: 10px;
+	text-align: center;
+}
 
-.flex-control-thumbs {margin: 5px 0 0; position: static; overflow: hidden;}
-.flex-control-thumbs li {width: 25%; float: left; margin: 0;}
-.flex-control-thumbs img {width: 100%; display: block; opacity: .7; cursor: pointer;}
-.flex-control-thumbs img:hover {opacity: 1;}
-.flex-control-thumbs .flex-active {opacity: 1; cursor: default;}
+.flex-control-nav li {
+	margin: 0 6px;
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	float: none;
+}
+
+.flex-control-paging li a {
+	width: 11px;
+	height: 11px;
+	display: block;
+	background: #666;
+	background: rgba(0,0,0,0.5);
+	cursor: pointer;
+	text-indent: -9999px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	-o-border-radius: 20px;
+	border-radius: 20px;
+	-webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+	-moz-box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+	-o-box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+	box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+}
+
+.flex-control-paging li a:hover {
+	background: #333;
+	background: rgba(0,0,0,0.7);
+}
+
+.flex-control-paging li a.flex-active {
+	background: #000;
+	background: rgba(0,0,0,0.9);
+	cursor: default;
+    margin: 0 5px;
+}
+
+.flex-control-thumbs {
+	margin: 5px 0 0;
+	position: static;
+	overflow: hidden;
+}
+
+.flex-control-thumbs li {
+	width: 25%;
+	float: left;
+	margin: 0;
+}
+
+.flex-control-thumbs img {
+	width: 100%;
+	display: block;
+	opacity: .7;
+	cursor: pointer;
+}
+
+.flex-control-thumbs img:hover {
+	opacity: 1;
+}
+
+.flex-control-thumbs .flex-active {
+	opacity: 1;
+	cursor: default;
+}
 
 @media screen and (max-width: 860px) {
-  .flex-direction-nav .flex-prev { opacity: 1; left: 10px;}
-  .flex-direction-nav .flex-next { opacity: 1; right: 10px;}
+	.flex-direction-nav .flex-prev {
+		opacity: 1;
+		left: 10px;
+	}
+
+	.flex-direction-nav .flex-next {
+		opacity: 1;
+		right: 10px;
+	}
 }

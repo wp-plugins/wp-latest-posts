@@ -3,6 +3,15 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.3.0:
+* Add new default theme
+
+Revision 3.2.1:
+* Fix first image size
+
+Revision 3.2.0:
+* Add new portfolio theme
+
 Revision 3.1.4:
 * Fix notice PHP message
 
@@ -75,4 +84,3 @@ Revision 2.0.3:
 
 Revision 2.0.2:
  * Add a good close div.
- 
