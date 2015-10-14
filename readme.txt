@@ -3,7 +3,7 @@ Contributors: JoomUnited
 Tags: latest post, news widget, recent posts, posts, recent post widget, news posts, latest page, custom content, previous posts, page, featured posts
 Requires at least: 4.0
 Tested up to: 4.3.1
-Stable tag: 3.3.0
+Stable tag: 3.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,8 +103,9 @@ Once the plugin is installed, just create your first news block and insert it in
 
 
 == Revisions ==
+* 3.4.0 Generate a PHP code in order to insert a news bloc in page template file
 * 3.3.0 New default theme
-* 3.2.0 Generate a PHP code in order to insert a news bloc in page template file
+* 3.2.0 Add new portfolio theme
 * 3.1.2 Fix Enqueue style and script (Fusion Page Builder compatibility)
 * 3.1.1 Best Way to enqueue style (header) and script (footer)
 * 3.1.0 Add multiple settings in animation block
@@ -123,9 +124,11 @@ Once the plugin is installed, just create your first news block and insert it in
 
 == Changelog ==
 = 3.3.0 : = 
+* Generate a PHP code in order to insert a news bloc in page template file
+= 3.3.0 : = 
 * New default theme
 = 3.2.0 : = 
-* Generate a PHP code in order to insert a news bloc in page template file
+* Add new portfolio theme
 = 3.1.4 : = 
 * Fix notice PHP message
 = 3.1.3 : = 

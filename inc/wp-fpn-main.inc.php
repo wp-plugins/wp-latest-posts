@@ -477,7 +477,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		if( wpcuWPFnPlugin::CUSTOM_POST_NEWS_WIDGET_NAME != get_post_type() )
 			return $hook;
-				
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-ui');
 		wp_enqueue_script('jquery-ui-core');
@@ -497,13 +496,13 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			true
 		);
 		*/
-		wp_enqueue_script(
-			'wpcufpn-colorpicker',
-			plugins_url( 'js/wpcufpn_colorpicker.js', dirname( __FILE__ ) ),
-			array( 'jquery' ),
-			'0.1',
-			true
-		);
+//		wp_enqueue_script(
+//			'wpcufpn-colorpicker',
+//			plugins_url( 'js/wpcufpn_colorpicker.js', dirname( __FILE__ ) ),
+//			array( 'jquery' ),
+//			'0.1',
+//			true
+//		);
 		
 		wp_enqueue_script(
 			'wpcufpn-back',
@@ -512,8 +511,13 @@ class wpcuWPFnPlugin extends YD_Plugin {
 			'0.1',
 			true
 		);
-		
-		
+        wp_enqueue_script( 'wp-color-picker');
+
+        wp_enqueue_script('wpcufpn-newColorPicker', plugins_url('js/wpcufpn_newColorPicker.js', dirname(__FILE__)),
+            array('jquery'),
+            '0.1',
+            true
+            );
 	}
 	
 	/**
@@ -523,7 +527,10 @@ class wpcuWPFnPlugin extends YD_Plugin {
 	 */
 	function addAdminStylesheets() {
 		
-		wp_register_style( 'uiStyleSheet', plugins_url( 'css/jquery-ui-custom.css', dirname( __FILE__ ) ) );
+		/** add color picker css */
+        wp_enqueue_style('wp-color-picker');
+
+        wp_register_style( 'uiStyleSheet', plugins_url( 'css/jquery-ui-custom.css', dirname( __FILE__ ) ) );
 		
 		wp_enqueue_style( 'uiStyleSheet' );
 		
@@ -1111,7 +1118,9 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<ul class="fields">';
 		
 		echo '<li class="field"><label for="date_fmt" class="coltab">' . __( 'Date format', 'wpcufpn' ) . '</label>' .
-			'<input id="date_fmt" type="text" name="wpcufpn_date_fmt" value="' . htmlspecialchars( isset($settings['date_fmt'])?$settings['date_fmt']:'' ) . '" class="short-text" /></li>';
+			'<input id="date_fmt" type="text" name="wpcufpn_date_fmt" value="' . htmlspecialchars( isset($settings['date_fmt'])?$settings['date_fmt']:'' ) . '" class="short-text" />
+			<a id="wpcufpn_dateFormat" target="_blank" href="http://php.net/manual/en/function.date.php"> ' . __( 'Date format', 'wpcufpn' ) . ' </a>
+			</li>';
 		
 		echo '<li class="field"><label for="text_content" class="coltab">' . __( 'Text Content', 'wpcufpn' ) . '</label>' .
 		    '<select name="wpcufpn_text_content" id="text_content">' .
@@ -1134,10 +1143,14 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		}
 		
 			
-		echo '<hr/><div><label for="custom_css" class="coltab">' . __( 'Custom CSS', 'wpcufpn' ) . '</label>' .
+		echo '<hr/><div><label for="custom_css" class="coltab" style="vertical-align:top">' . __( 'Custom CSS', 'wpcufpn' ) . '</label>' .
 			'<textarea id="custom_css" cols="100" rows="5" name="wpcufpn_custom_css">' . ( isset($settings['custom_css'])?$settings['custom_css']:'' ) . '</textarea></div>';
-		
-		 
+
+        if (isset($post->ID) && isset($post->post_title) && (!empty($post->post_title)))
+        {
+            echo '<hr/><div><label for="phpCodeInsert" class="coltab" style="margin:10px 0 5px">' . __( 'Copy & paste this code into a template file to display this WPLP block', 'wpcufpn' ) . '</label>' .
+                '<br><textarea readonly id="phpCodeInsert" cols="100" rows="2" name="wpcufpn_phpCodeInsert">'.__( 'echo do_shortcode(\'[frontpage_news widget="'.$post->ID.'" name="'.$post->post_title.'"]\');' , "wpcufpn" ) . '</textarea></div>';
+        }
 	}
 	
 	/**
@@ -1675,6 +1688,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
                 $widget->settings = get_post_meta( $widget->ID, '_wpcufpn_settings', true );
 				$front = new wpcuFPN_Front( $widget );
 				$front->loadThemeStyle();
+                $front->loadThemeScript();
 				$html .= $front->display( false );
 			} else {
 				$html .= "\n<!-- WPFN: this News Widget is not initialized -->\n";

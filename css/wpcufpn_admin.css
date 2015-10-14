@@ -288,6 +288,11 @@ p.wpcu.pro_reminder {
 	list-style-type:none;
 }
 
+a#wpcufpn_dateFormat{
+    color: #0074a2;
+    margin-left: 6px;
+}
+
 span.radioset label{
 	margin-right:20px;
 }
@@ -318,66 +323,24 @@ span.radioset label{
  */
 
 /* COLORPICKER 1 EXAMPLE */
-#colorPicker
+div#colorPicker
 {
-    width:          30px;
-    height:         30px;
-    position: relative;
-    clear: both;
-    margin: 20px auto 20px;
+   display: inline-block;
 }
 
-#colorPicker .track {
-    background:     #EFEFEF url(images/text-color.png) no-repeat 50% 50%;
-    height:         150px;
-    width:          150px;
-    padding:        10px;
-    position:       absolute;
-    cursor:         crosshair;
-    float:          left;
-    left:           -71px;
-    top:            -71px;
-    display:        none;
-    border:         1px solid #ccc;
-    z-index:        10;
-    -webkit-border-radius: 150px;
-    -moz-border-radius: 150px;
-    border-radius: 150px;
-
+#colorPicker .track { 
 }
 
 #colorPicker .color {
-    width:          25px;
-    height:         25px;
-    padding:        1px;
-    border:         1px solid #ccc;
-    display:        block;
-    position:       relative;
-    z-index:        11;
-    background-color: #EFEFEF;
-    -webkit-border-radius: 27px;
-    -moz-border-radius: 27px;
-    border-radius: 27px;
-    cursor: pointer;
+ 
 }
 
 #colorPicker .colorInner {
-    width:          25px;
-    height:         25px;
-    -webkit-border-radius: 27px;
-    -moz-border-radius: 27px;
-    border-radius: 27px;
+
 }
 
 #colorPicker .dropdown {
-    list-style: none;
-    display: none;
-    width: 27px;
-    position: absolute;
-    top: 28px;
-    border: 1px solid #ccc;
-    left: 0;
-    z-index: 1000;
+ 
 }
 #colorPicker .color.disabled {display:none;}
 #colorPicker .dropdown li{
@@ -386,11 +349,11 @@ span.radioset label{
 }
 
 #colorPicker .track canvas:last-child {
-top: 10px;
-left: 10px;
-position: absolute;
-}
 
+}
+#defaultColorTheme {
+    margin-top: 0;
+}
 .field.disabled {opacity:0.5;}
 
 
