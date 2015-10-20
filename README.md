@@ -3,6 +3,12 @@ WP Latest Post
 
 Updates :
 ---------
+Revision 3.5.0:
+* Add codemirror, Offset parameter, set order to random
+
+Revision 3.4.0:
+* Generate a PHP code in order to insert a news bloc in page template file
+
 Revision 3.3.0:
 * Add new default theme
 

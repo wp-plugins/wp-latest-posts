@@ -3,7 +3,7 @@ Contributors: JoomUnited
 Tags: latest post, news widget, recent posts, posts, recent post widget, news posts, latest page, custom content, previous posts, page, featured posts
 Requires at least: 4.0
 Tested up to: 4.3.1
-Stable tag: 3.4.0
+Stable tag: 3.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,7 @@ Once the plugin is installed, just create your first news block and insert it in
 
 
 == Revisions ==
+* 3.5.0 Add codemirror, Offset parameter, set order to random
 * 3.4.0 Generate a PHP code in order to insert a news bloc in page template file
 * 3.3.0 New default theme
 * 3.2.0 Add new portfolio theme

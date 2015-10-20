@@ -7,18 +7,20 @@ class wpcuFPN_Front {
      * config crop in here
      * crop const
      */
-	const DEFAULT_TITLE_EM_SIZE     = 1.24;
-	const TIMELINE_TITLE_EM_SIZE 	= 1.35;
-	const SMOOTH_TITLE_EM_SIZE 	    = 1.35;
-	const MASONRY_TITLE_EM_SIZE 	= 1.1;
-	const PORTFOLIO_TITLE_EM_SIZE 	= 1;
+	const DEFAULT_TITLE_EM_SIZE             = 1.24;
+	const TIMELINE_TITLE_EM_SIZE 	        = 1.35;
+	const SMOOTH_TITLE_EM_SIZE 	            = 1.35;
+	const MASONRY_GID_TITLE_EM_SIZE 	    = 1.35;
+    const MASONRY_CATEGORY_TITLE_EM_SIZE 	= 1.35;
+	const PORTFOLIO_TITLE_EM_SIZE 	        = 1.15;
 
 
-	const DEFAULT_TEXT_EM_SIZE		= 1.4;
-	const TIMELINE_TEXT_EM_SIZE		= 1.5;
-	const SMOOTH_TEXT_EM_SIZE		= 1.25;
-	const MASONRY_TEXT_EM_SIZE		= 1.1;
-	const PORTFOLIO_TEXT_EM_SIZE	= 1.1;
+	const DEFAULT_TEXT_EM_SIZE		        = 1.4;
+	const TIMELINE_TEXT_EM_SIZE		        = 1.6875;
+	const SMOOTH_TEXT_EM_SIZE		        = 1.4;
+	const MASONRY_GID_TEXT_EM_SIZE		    = 1.21;
+    const MASONRY_CATEGORY_TEXT_EM_SIZE		= 1.23;
+	const PORTFOLIO_TEXT_EM_SIZE	        = 1.1;
 
 	public		$widget;
 	private	$html		= '';
@@ -178,6 +180,8 @@ class wpcuFPN_Front {
 					$order_by = 'title';
 				if( 'order' == $this->widget->settings['cat_post_source_order'] )
 					$order_by = 'menu_order';
+                if( 'random' == $this->widget->settings['cat_post_source_order'] )
+                    $order_by = 'rand';
 			}
 			if( 'src_page' == $this->widget->settings['source_type'] ) {
 				if( 'date' == $this->widget->settings['pg_source_order'] )
@@ -186,6 +190,9 @@ class wpcuFPN_Front {
 					$order_by = 'title';
 				if( 'order' == $this->widget->settings['pg_source_order'] )
 					$order_by = 'menu_order';
+                if( 'random' == $this->widget->settings['pg_source_order'] )
+                    $order_by = 'rand';
+
 			}
 			if( 'src_custom_post_type' == $this->widget->settings['source_type'] ) {
 				if( 'date' == $this->widget->settings['cat_source_order'] )
@@ -194,6 +201,8 @@ class wpcuFPN_Front {
 					$order_by = 'title';
 				if( 'order' == $this->widget->settings['cat_source_order'] )
 					$order_by = 'menu_order';
+                if( 'random' == $this->widget->settings['cat_source_order'] )
+                    $order_by = 'rand';
 			}
 			
 			/** source_asc (order) **/
@@ -221,13 +230,19 @@ class wpcuFPN_Front {
 			$limit = 10;
 			if( $this->widget->settings['max_elts'] > 0 )
 				$limit = $this->widget->settings['max_elts'];
-			
-			
-			$args = array( 
+
+            $offSet = null;
+            if (isset($this->widget->settings['off_set']) && $this->widget->settings['off_set'] > 0)
+            {
+                $offSet = $this->widget->settings['off_set'];
+            }
+
+			$args = array(
 					'post_type'			=> $post_type,
 					'orderby'			=> $order_by,
 					'order' 			=> $order,
-					'posts_per_page' 	=> $limit
+					'posts_per_page' 	=> $limit,
+                    'offset'            => $offSet
 			);
 			
 			if( 'src_custom_post_type' == $this->widget->settings['source_type']){
@@ -833,7 +848,6 @@ class wpcuFPN_Front {
 		global $post;
         $cropTextSize   = "";
         $cropTitleSize  = "";
-
         if (strpos($this->widget->settings["theme"],'portfolio'))
         {
             $cropTextSize  = self::PORTFOLIO_TEXT_EM_SIZE;
@@ -842,8 +856,15 @@ class wpcuFPN_Front {
 
         elseif (strpos($this->widget->settings["theme"],'masonry'))
         {
-            $cropTextSize  = self::MASONRY_TEXT_EM_SIZE;
-            $cropTitleSize = self::MASONRY_TITLE_EM_SIZE;
+            if (strpos($this->widget->settings["theme"],'masonry-category'))
+            {
+                $cropTextSize  = self::MASONRY_CATEGORY_TEXT_EM_SIZE;
+                $cropTitleSize = self::MASONRY_CATEGORY_TITLE_EM_SIZE;
+
+            }else {
+                $cropTextSize  = self::MASONRY_GID_TEXT_EM_SIZE;
+                $cropTitleSize = self::MASONRY_GID_TITLE_EM_SIZE;
+            }
         }
 
         elseif (strpos($this->widget->settings["theme"],'smooth'))
@@ -906,10 +927,10 @@ class wpcuFPN_Front {
 		
 			$text = $post->post_content;
 			if (isset($this->widget->settings["text_content"]) && $this->widget->settings["text_content"]=="0") {
-				$text = $post->post_content;
+                $text = $post->post_content;
 			}
-			else if (isset($this->widget->settings["text_content"]) && $this->widget->settings["text_content"]=="1"){
-				$text = $post->post_excerpt;
+			elseif(isset($this->widget->settings["text_content"]) && $this->widget->settings["text_content"]=="1"){
+                $text = $post->post_excerpt;
 			}
 			
 			$text = strip_shortcodes( $text );	

@@ -35,6 +35,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		'amount_cols'			=> 3,
 		'pagination'			=> 2,
 		'max_elts'				=> 5,
+        'off_set'               => 0,   //number posts to skip
 		'total_width'			=> 100,
 		'total_width_unit'		=> 0,	//%
 		'crop_title'			=> 2,
@@ -518,6 +519,25 @@ class wpcuWPFnPlugin extends YD_Plugin {
             '0.1',
             true
             );
+
+        /** add codemirror js */
+        wp_enqueue_script('wpcufpn-codemirror', plugins_url('codemirror/lib/codemirror.js', dirname(__FILE__)),
+            array('jquery'),
+            '0.1',
+            true
+        );
+        /** mode css */
+        wp_enqueue_script('wpcufpn-codemirrorMode', plugins_url('codemirror/mode/css/css.js', dirname(__FILE__)),
+            array('jquery'),
+            '0.1',
+            true
+        );
+
+        wp_enqueue_script('wpcufpn-codemirrorAdmin', plugins_url('js/wpcufpn_codemirrorAdmin.js', dirname(__FILE__)),
+            array('jquery'),
+            '0.1',
+            true
+        );
 	}
 	
 	/**
@@ -539,6 +559,13 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		
 		wp_register_style( 'unifStyleSheet', plugins_url( 'css/uniform/css/uniform.default.css', dirname( __FILE__ ) ) );
 		wp_enqueue_style( 'unifStyleSheet' );
+
+        /** add codemirror css */
+        wp_register_style('wpcufpn_codemirror', plugins_url( 'codemirror/lib/codemirror.css', dirname( __FILE__ ) ) );
+        wp_enqueue_style('wpcufpn_codemirror');
+
+        wp_register_style('wpcufpn_codemirrorTheme', plugins_url( 'codemirror/theme/3024-day.css', dirname( __FILE__ ) ) );
+        wp_enqueue_style('wpcufpn_codemirrorTheme');
 	}
 	
 	
@@ -907,7 +934,10 @@ class wpcuWPFnPlugin extends YD_Plugin {
 				$text . '</option>';
 		}
 		echo '</select></li>';
-		
+        /** offset number posts to skip */
+        echo '<li class="field"><label for="off_set" class="coltab">' . __( 'Number of posts to skip:', 'wpcufpn' ) . '</label>' .
+            '<input id="off_set" type="text" name="wpcufpn_off_set" value="' . htmlspecialchars( isset($settings['off_set'])?$settings['off_set']:'' ) . '" class="short-text" />';
+
 		do_action( 'wpcufpn_displayandtheme_add_fields', $settings );
 		echo '</ul>';	//fields
 		echo '</div>';	//wpcu-inner-admin-block
@@ -1141,7 +1171,6 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		} else {
 			do_action( 'wpcufpn_displayadvanced_add_fields', $settings );
 		}
-		
 			
 		echo '<hr/><div><label for="custom_css" class="coltab" style="vertical-align:top">' . __( 'Custom CSS', 'wpcufpn' ) . '</label>' .
 			'<textarea id="custom_css" cols="100" rows="5" name="wpcufpn_custom_css">' . ( isset($settings['custom_css'])?$settings['custom_css']:'' ) . '</textarea></div>';
@@ -1310,12 +1339,13 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<select name="wpcufpn_cat_post_source_order" id="cat_post_source_order" >';
 		echo '<option value="date" ' . (isset($source_order_selected['date'])?$source_order_selected['date']:"") . '>' . __( 'By date', 'wpcufpn' ) . '</option>';
 		echo '<option value="title" ' . (isset($source_order_selected['title'])?$source_order_selected['title']:"") . '>' . __( 'By title', 'wpcufpn' ) . '</option>';
+        echo '<option value="random" ' . (isset($source_order_selected['random'])?$source_order_selected['random']:"") . '>' . __( 'By random', 'wpcufpn' ) . '</option>';
 		//echo '<option value="order" ' . $source_order_selected['order'] . '>' . __( 'By order', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
 		
 		echo '<li class="field">';
-		echo '<label for="cat_post_source_asc" class="coltab">' . __( 'News sort order', 'wpcufpn' ) . '</label>';
+		echo '<label for="cat_post_source_asc" class="coltab">' . __( 'Posts sort order', 'wpcufpn' ) . '</label>';
 		echo '<select name="wpcufpn_cat_post_source_asc" id="cat_post_source_asc">';
 		echo '<option value="asc" ' . (isset($source_asc_selected['asc'])?$source_asc_selected['asc']:"") . '>' . __( 'Ascending', 'wpcufpn' ) . '</option>';
 		echo '<option value="desc" ' . (isset($source_asc_selected['desc'])?$source_asc_selected['desc']:"") . '>' . __( 'Descending', 'wpcufpn' ) . '</option>';
@@ -1381,6 +1411,7 @@ class wpcuWPFnPlugin extends YD_Plugin {
 		echo '<option value="order" ' . (isset($source_order_selected['order'])?$source_order_selected['order']:"") . '>' . __( 'By order', 'wpcufpn' ) . '</option>';
 		echo '<option value="title" ' . (isset($source_order_selected['title'])?$source_order_selected['title']:"") . '>' . __( 'By title', 'wpcufpn' ) . '</option>';
 		echo '<option value="date" ' . (isset($source_order_selected['date'])?$source_order_selected['date']:"") . '>' . __( 'By date', 'wpcufpn' ) . '</option>';
+        echo '<option value="random" ' . (isset($source_order_selected['random'])?$source_order_selected['random']:"") . '>' . __( 'By random', 'wpcufpn' ) . '</option>';
 		echo '</select>';
 		echo '</li>';	//field
 		
@@ -1549,11 +1580,50 @@ class wpcuWPFnPlugin extends YD_Plugin {
 				    	shortcode += ']';
 				    	
 				    	/** Inserts the shortcode into the active editor and reloads display **/
-				    	var ed = tinyMCE.activeEditor;
-						ed.execCommand('mceInsertContent', 0, shortcode);            			
-						setTimeout(function() { ed.hide(); }, 1);
-					    setTimeout(function() { ed.show(); }, 10);
+//				    	var ed = tinyMCE.activeEditor;
+//
+//                            console.log("visual");
+//                            ed.execCommand('mceInsertContent', 0, shortcode);
+//                            setTimeout(function() { ed.hide(); }, 1);
+//                            setTimeout(function() { ed.show(); }, 10);
+//
+                        wpcufpn_send_to_editor(shortcode);
 				    }
+                    
+                    var wpActiveEditor, wpcufpn_send_to_editor;
+
+                    wpcufpn_send_to_editor = function( html ) {
+                        var editor,
+                            hasTinymce = typeof tinymce !== 'undefined',
+                            hasQuicktags = typeof QTags !== 'undefined';
+
+                        if ( ! wpActiveEditor ) {
+                            if ( hasTinymce && tinymce.activeEditor ) {
+                                editor = tinymce.activeEditor;
+                                wpActiveEditor = editor.id;
+                            } else if ( ! hasQuicktags ) {
+                                return false;
+                            }
+                        } else if ( hasTinymce ) {
+                            editor = tinymce.get( wpActiveEditor );
+                        }
+
+                        if ( editor && ! editor.isHidden() ) {
+                            editor.execCommand( 'mceInsertContent', 0, html );
+                            setTimeout(function() { editor.hide(); }, 1);
+                            setTimeout(function() { editor.show(); }, 10);
+
+                        } else if ( hasQuicktags ) {
+                            QTags.insertContent( html );
+                        } else {
+                            document.getElementById( wpActiveEditor ).value += html;
+                        }
+
+                        // If the old thickbox remove function exists, call it
+                        if ( window.tb_remove ) {
+                            try { window.tb_remove(); } catch( e ) {}
+                        }
+                    };
 				})( jQuery );
 				</script>
 			</div>
